@@ -115,6 +115,9 @@ namespace ScienceChecklist {
 				case DisplayMode.Unlocked:
 					query = query.Where(x => x.IsUnlocked == true);
 					break;
+				case DisplayMode.NotActiveVessel:
+					query = ApplyNotActiveVesselFilter(query);
+					break;
 				case DisplayMode.ActiveVessel:
 					query = ApplyActiveVesselFilter(query);
 					break;
@@ -232,6 +235,8 @@ namespace ScienceChecklist {
             return foundData;
         }
 
+		//TODO Add method GetCurrentVesselNotOnborardData()
+
 
 
         private bool IsAmountLimitedByDMagic(ScienceInstance x, IList<ModuleScienceExperiment> DMModuleScienceAnimateGenerics)
@@ -330,6 +335,37 @@ namespace ScienceChecklist {
 		}
 
 
+		/// <summary>
+		/// Filters a collection of experiments to only return unlocked ones that can not be performed on the current vessel.
+		/// </summary>
+		/// <param name="src">The source experiment collection.</param>
+		/// <returns>A filtered collection of unlocked experiments that can not be performed on the current vessel.</returns>
+		private IEnumerable<ScienceInstance> ApplyNotActiveVesselFilter (IEnumerable<ScienceInstance> src) {
+			var result = Enumerable.Empty<ScienceInstance> ();
 
+			if(HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.EDITOR) {
+				var unlockedExperimentsSrc = src.Where(x => x.IsUnlocked);
+
+				switch (HighLogic.LoadedScene) {
+					case GameScenes.FLIGHT:
+						var vessel = FlightGlobals.ActiveVessel;
+						if(vessel != null) {
+							var possibleExperiments = ApplyPartFilter(unlockedExperimentsSrc, vessel.FindPartModulesImplementing<ModuleScienceExperiment>(), vessel.GetCrewCount() > 0);
+							result = unlockedExperimentsSrc.Except(possibleExperiments);
+						}
+						return result;
+					case GameScenes.EDITOR:
+						var sortedShipList = EditorLogic.SortedShipList;
+						if(sortedShipList != null) {
+							var possibleExperiments = ApplyPartFilter(unlockedExperimentsSrc, sortedShipList.SelectMany(x => x.Modules.OfType<ModuleScienceExperiment> ()), sortedShipList.Any (x => x != null && x.CrewCapacity > 0));
+							result = unlockedExperimentsSrc.Except(possibleExperiments);
+						}
+						return result;
+				}
+			}
+
+			return result;
+			
+		}
 	}
 }
