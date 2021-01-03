@@ -53,6 +53,7 @@ namespace ScienceChecklist
 		private readonly Texture2D _emptyTexture;
 		private readonly Texture2D _currentSituationTexture;
 		private readonly Texture2D _currentVesselTexture;
+		private readonly Texture2D _notCurrentVesselTexture;
 		private readonly Texture2D _unlockedTexture;
 		private readonly Texture2D _allTexture;
 		private readonly Texture2D _searchTexture;
@@ -93,6 +94,7 @@ namespace ScienceChecklist
 			_completeTextureCompact =				TextureHelper.FromResource( "ScienceChecklist.icons.scienceCompleteCompact.png", 8, 8 );
 			_currentSituationTexture =				TextureHelper.FromResource( "ScienceChecklist.icons.currentSituation.png", 25, 21 );
 			_currentVesselTexture =					TextureHelper.FromResource( "ScienceChecklist.icons.currentVessel.png", 25, 21 );
+			_notCurrentVesselTexture =				TextureHelper.FromResource( "ScienceChecklist.icons.notCurrentVessel.png", 25, 21);
 			_unlockedTexture =						TextureHelper.FromResource( "ScienceChecklist.icons.unlocked.png", 25, 21 );
 			_allTexture =							TextureHelper.FromResource( "ScienceChecklist.icons.all.png", 25, 21 );
 			_searchTexture =						TextureHelper.FromResource( "ScienceChecklist.icons.search.png", 25, 21 );
@@ -445,18 +447,19 @@ namespace ScienceChecklist
 
 
 			var TextWidth = wScale(290);
-			var NumButtons = 3;
+			var NumButtons = 4;
 			GUIContent[ ] FilterButtons = {
 					new GUIContent(_currentSituationTexture, "Show experiments available right now"),
 					new GUIContent(_currentVesselTexture, "Show experiments available on this vessel"),
-					new GUIContent(_unlockedTexture, "Show all unlocked experiments")
+					new GUIContent(_notCurrentVesselTexture, "Show unlocked experiements unavialable on this vessel"),
+					new GUIContent(_unlockedTexture, "Show all unlocked experiments"),
 				};
 			if( _parent.Config.AllFilter )
 			{
-				Array.Resize( ref FilterButtons, 4 );
-				FilterButtons[ 3 ] = new GUIContent(_allTexture, "Show all experiments");
+				Array.Resize( ref FilterButtons, 5 );
+				FilterButtons[ 4 ] = new GUIContent(_allTexture, "Show all experiments");
 				TextWidth = wScale(260);
-				NumButtons = 4;
+				NumButtons = 5;
 			}
 			else
 			{
