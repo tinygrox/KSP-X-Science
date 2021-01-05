@@ -10,7 +10,7 @@ namespace ScienceChecklist {
 		// Locals
 			private readonly Logger _logger;
 			private readonly string _assemblyPath = Path.GetDirectoryName( typeof( ScienceChecklistAddon ).Assembly.Location );
-			private readonly string _file = KSP.IO.IOUtils.GetFilePathFor( typeof( ScienceChecklistAddon ), "settings.cfg" );
+			private readonly string _file = "GameData/[x]_Science!/PluginData/settings.cfg" ;
 			private Dictionary<GameScenes, Dictionary<string, WindowSettings>> _windowSettings = new Dictionary<GameScenes, Dictionary<string, WindowSettings>>( );
 
 			private bool _hideCompleteExperiments;

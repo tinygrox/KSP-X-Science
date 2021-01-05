@@ -2,7 +2,7 @@
 using System.Reflection;
 using UnityEngine;
 using KSP.IO;
-
+using ToolbarControl_NS;
 
 namespace ScienceChecklist
 {
@@ -19,6 +19,7 @@ namespace ScienceChecklist
 		/// <returns></returns>
 		public static Texture2D FromResource( string resource, int width, int height )
 		{
+#if false
 			var tex = new Texture2D( width, height, TextureFormat.ARGB32, false );
 			var iconStream = Assembly.GetExecutingAssembly( ).GetManifestResourceStream( resource ).ReadToEnd( );
 			if( iconStream == null )
@@ -26,6 +27,14 @@ namespace ScienceChecklist
 			tex.LoadImage( iconStream );
 			tex.Apply( );
 			return tex;
+#else
+			var sar = resource.Split('.');
+			int cnt = sar.Length;
+
+			Texture2D tex = new Texture2D(width, height, TextureFormat.ARGB32, false);
+			ToolbarControl.LoadImageFromFile(ref tex, "GameData/[x]_Science!/PluginData/Icons/" + sar[cnt-2]);
+			return tex;
+#endif
 		}
 
 
