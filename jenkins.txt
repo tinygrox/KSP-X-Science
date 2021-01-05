@@ -31,12 +31,13 @@
 1:[x]_Science!, [x]-Science!.version, KSP-X-Science
 
 # 2:PROJNAME, PROJFILE, VERSIONFILE, PLUGINSFOLDER
-2:[x]_Science!,[x]_Science!/[x]_Science!.csproj,[x]-Science!.version,GameData/[x]_Science!/Plugins
+2:[x]_Science!,X-Science/[x]_Science!.csproj,[x]-Science!.version,GameData/[x]_Science!/Plugins
 
 # 3:SOURCEFILE, DESTDIR
 3:[x]-Science!.version,GameData/[x]_Science!
 #3:LICENSE.md,GameData/[x]_Science!
 3:README.md,GameData/[x]_Science!
+3:ChangeLog.txt,GameData/[x]_Science!
 
 # 4:SOURCDIR, DESTDIR
 #4:Textures,GameData/ManeuverQueue/Textures
