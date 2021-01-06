@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using KSP;
-
+using ClickThroughFix;
 
 
 namespace ScienceChecklist
@@ -324,11 +324,11 @@ namespace ScienceChecklist
 
 			if( _compactMode )
 			{
-				_rect3 = GUILayout.Window(_window3Id, _rect3, DrawCompactControls, string.Empty, _compactWindowStyle);
+				_rect3 = ClickThruBlocker.GUILayoutWindow(_window3Id, _rect3, DrawCompactControls, string.Empty, _compactWindowStyle);
 			}
 			else
 			{
-				_rect = GUILayout.Window( _windowId, _rect, DrawControls, "[x] Science!");
+				_rect = ClickThruBlocker.GUILayoutWindow( _windowId, _rect, DrawControls, "[x] Science!");
 			}
 
 
@@ -352,7 +352,7 @@ namespace ScienceChecklist
 				};
 
 				float boxHeight = _tooltipBoxStyle.CalcHeight( new GUIContent( _lastTooltip ), wScale(190) );
-				GUI.Window(_window2Id, new Rect(Mouse.screenPos.x + wScale(15), Mouse.screenPos.y + wScale(15), wScale(200), boxHeight + wScale(10)), x =>
+				ClickThruBlocker.GUIWindow(_window2Id, new Rect(Mouse.screenPos.x + wScale(15), Mouse.screenPos.y + wScale(15), wScale(200), boxHeight + wScale(10)), x =>
 				{
 					GUI.Box(new Rect(wScale(5), wScale(5), wScale(190), boxHeight), _lastTooltip, _tooltipBoxStyle);
 				}, string.Empty, _tooltipStyle );

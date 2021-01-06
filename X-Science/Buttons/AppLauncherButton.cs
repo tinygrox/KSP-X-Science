@@ -2,7 +2,7 @@
 using UnityEngine;
 using KSP.UI.Screens;
 
-
+#if false
 
 
 namespace ScienceChecklist
@@ -182,3 +182,5 @@ namespace ScienceChecklist
 
 	}
 }
+
+#endif

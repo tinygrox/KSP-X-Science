@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-
+#if false
 namespace ScienceChecklist
 {
 	internal interface IToolbarButton
@@ -57,3 +57,4 @@ namespace ScienceChecklist
 
 	}
 }
+#endif

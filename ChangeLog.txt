@@ -3,15 +3,17 @@ ChangeLog
 6.0.0
 	Replaced space in directory name with underscore.  Main directory is now "[x]_Science!"
 	Moved settings.cfg up into the PluginData
+	Moved the science.cfg into the PluginData
 	Created Icons directory in PluginData
-	Copied all icons into the PluginData
+	Copied all icons into the PluginData/Icons
 	Replaced texture-loading of icons with ToolbarControl.LoadImageFromFile
-	Added following dependencies
-		ToolbarController
-		ClickThroughBlocker
-		SpaceTuxLibrary
 	Added InstallChecker
 	Added AssemblyVersion.tt
 	Added KSPAssemblyDependency
 	Moved GameData from source directory into main directory
 	Removed MiniAVC libraries
+	Replaced all old Button code with ToolbarController, saved about 2000 lines of code
+	New Dependencies
+		ClickThroughBlocker
+		ToolbarController
+		SpaceTuxLibrary

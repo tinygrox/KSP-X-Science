@@ -1,633 +1,707 @@
 ﻿using System;
 using UnityEngine;
 using KSP.UI.Screens;
+using ToolbarControl_NS;
 
 
 
-namespace ScienceChecklist {
-	[KSPAddon(KSPAddon.Startup.MainMenu, true)]
-	public class ScienceChecklistAddon : MonoBehaviour
-	{
-		#region FIELDS
-		public const string WINDOW_NAME_CHECKLIST =		"ScienceChecklist";
-		public const string WINDOW_NAME_STATUS =		"StatusWindow";
-		public const string WINDOW_NAME_SHIP_STATE =	"ShipStateWindow";
+namespace ScienceChecklist
+{
+    [KSPAddon(KSPAddon.Startup.MainMenu, true)]
+    public class ScienceChecklistAddon : MonoBehaviour
+    {
+        #region FIELDS
+        public const string WINDOW_NAME_CHECKLIST = "ScienceChecklist";
+        public const string WINDOW_NAME_STATUS = "StatusWindow";
+        public const string WINDOW_NAME_SHIP_STATE = "ShipStateWindow";
 
 
 
-		public xScienceEventHandler		ScienceEventHandler;
-		public ScienceContext Science	{ get; private set; }
-		public DMagicFactory DMagic		{ get; private set; }
-		public Config Config			{ get; private set; }
+        public xScienceEventHandler ScienceEventHandler;
+        public ScienceContext Science { get; private set; }
+        public DMagicFactory DMagic { get; private set; }
+        public Config Config { get; private set; }
 
-		private bool					_active;			// Are we actually running?
-		private bool					_launcherVisible;	// If the toolbar is shown
-		private bool					_UiHidden;			// If the user hit F2 
-		private static bool				_addonInitialized;	// Bug fix multiple inits, only init once
+        private bool _active;           // Are we actually running?
+        private bool _launcherVisible;  // If the toolbar is shown
+        private bool _UiHidden;         // If the user hit F2 
+        private static bool _addonInitialized;  // Bug fix multiple inits, only init once
 
 
-		private Logger					_logger;
-		private Noise					_alertNoise; // Needs to be here because of MonoBehaviour's "gameObject"
-		private UnifiedButton			_checklistButton;
-		private UnifiedButton			_statusButton;
+        private Logger _logger;
+        private Noise _alertNoise; // Needs to be here because of MonoBehaviour's "gameObject"
+        private ToolbarControl checklistToolbarControl;
+        private ToolbarControl statusToolbarControl;
+        //private UnifiedButton			_checklistButton;
+        //private UnifiedButton			_statusButton;
 
-		private ScienceWindow			_checklistWindow;
-		private StatusWindow			_statusWindow;
-		private SettingsWindow			_settingsWindow;
-		private HelpWindow				_helpWindow;
-		private ShipStateWindow			_shipStateWindow;
-		#endregion
+        private ScienceWindow _checklistWindow;
+        private StatusWindow _statusWindow;
+        private SettingsWindow _settingsWindow;
+        private HelpWindow _helpWindow;
+        private ShipStateWindow _shipStateWindow;
+        #endregion
 
 
 
-		#region METHODS For Unity
-		// Called by Unity once to initialize the class.
-		public void Awake( )
-		{
-			_logger = new Logger( this );
-			_logger.Trace( "Awake" );
-		}
+        #region METHODS For Unity
+        // Called by Unity once to initialize the class.
+        public void Awake()
+        {
+            _logger = new Logger(this);
+            _logger.Trace("Awake");
+        }
 
 
 
-		// Called by Unity once to initialize the class, just before Update is called.
-		public void Start( )
-		{
-			_logger.Trace( "Start" );
+        // Called by Unity once to initialize the class, just before Update is called.
+        public void Start()
+        {
+            _logger.Trace("Start");
 
-			if( _addonInitialized == true )
-			{
-				// For some reason the addon can be instantiated several times by the KSP addon loader (generally when going to/from the VAB),
-				// even though we set onlyOnce to true in the KSPAddon attribute.
-				HammerMusicMute( ); // Ensure we enforce music volume anyway
-				return;
-			}
-			_addonInitialized = true;
-			_active = false;
+            if (_addonInitialized == true)
+            {
+                // For some reason the addon can be instantiated several times by the KSP addon loader (generally when going to/from the VAB),
+                // even though we set onlyOnce to true in the KSPAddon attribute.
+                HammerMusicMute(); // Ensure we enforce music volume anyway
+                return;
+            }
+            _addonInitialized = true;
+            _active = false;
 
-			
-			
-			// Config
-			Config = new Config( );
-			Config.Load( );
-            
-			
-			
-			// Music Muting
-			if( Config.MusicStartsMuted )
-			{
-				Muted = true;
-				ScreenMessages.PostScreenMessage( "[x] Science! - Music Mute" );
-			}
 
-            GameEvents.onGameSceneSwitchRequested.Add( this.onGameSceneSwitchRequested );
-            GameEvents.onLevelWasLoaded.Add( this.onLevelWasLoaded );
 
+            // Config
+            Config = new Config();
+            Config.Load();
 
 
-//			_logger.Trace( "Making DMagic Factory" );
-			DMagic = new DMagicFactory( );
-//			_logger.Trace( "Made DMagic Factory" );
 
+            // Music Muting
+            if (Config.MusicStartsMuted)
+            {
+                Muted = true;
+                ScreenMessages.PostScreenMessage("[x] Science! - Music Mute");
+            }
 
+            GameEvents.onGameSceneSwitchRequested.Add(this.onGameSceneSwitchRequested);
+            GameEvents.onLevelWasLoaded.Add(this.onLevelWasLoaded);
 
-//			_logger.Trace( "Making ScienceContext" );
-			Science = new ScienceContext( this );
-//			_logger.Trace( "Made ScienceContext" );
 
 
+            //			_logger.Trace( "Making DMagic Factory" );
+            DMagic = new DMagicFactory();
+            //			_logger.Trace( "Made DMagic Factory" );
 
-			// Start event handlers
-			ScienceEventHandler = new xScienceEventHandler( this );
 
 
+            //			_logger.Trace( "Making ScienceContext" );
+            Science = new ScienceContext(this);
+            //			_logger.Trace( "Made ScienceContext" );
 
-			// Settings window
-			_settingsWindow = new SettingsWindow( this );
-			Config.UseBlizzysToolbarChanged += Settings_UseBlizzysToolbarChanged;
-			Config.RighClickMutesMusicChanged += Settings_RighClickMutesMusicChanged;
-			
 
-			
-			// Help window
-			_helpWindow = new HelpWindow( this );
 
-			
-			
-			// Status window
-			_alertNoise = gameObject.AddComponent<Noise>( );
-			_statusWindow = new StatusWindow( this );
-			_statusWindow.NoiseEvent += OnPlayNoise;
-			_statusWindow.WindowClosed += OnStatusWindowClosed;
-			_statusWindow.OnCloseEvent += OnStatusWindowClosed;
-			_statusWindow.OnOpenEvent += OnStatusWindowOpened;
+            // Start event handlers
+            ScienceEventHandler = new xScienceEventHandler(this);
 
-			
 
-			// Checklist window
-			_checklistWindow = new ScienceWindow( this, _settingsWindow, _helpWindow );
-			_checklistWindow.OnCloseEvent += OnChecklistWindowClosed;
-			_checklistWindow.OnOpenEvent += OnChecklistWindowOpened;
 
+            // Settings window
+            _settingsWindow = new SettingsWindow(this);
+           //Config.UseBlizzysToolbarChanged += Settings_UseBlizzysToolbarChanged;
+            Config.RighClickMutesMusicChanged += Settings_RighClickMutesMusicChanged;
 
 
-			// ShipState Window
-			_shipStateWindow = new ShipStateWindow( this );
 
+            // Help window
+            _helpWindow = new HelpWindow(this);
 
-			
-			// Save and load checklist window config when the game scene is changed
-			// We are only visible in some scenes
-			GameEvents.onGameSceneSwitchRequested.Add( new EventData<GameEvents.FromToAction<GameScenes, GameScenes>>.OnEvent( this.OnGameSceneSwitch ) );
 
 
+            // Status window
+            _alertNoise = gameObject.AddComponent<Noise>();
+            _statusWindow = new StatusWindow(this);
+            _statusWindow.NoiseEvent += OnPlayNoise;
+            _statusWindow.WindowClosed += OnStatusWindowClosed;
+            _statusWindow.OnCloseEvent += OnStatusWindowClosed;
+            _statusWindow.OnOpenEvent += OnStatusWindowOpened;
 
-			// Callbacks for buttons - we init when the "Launcher" toolbar is ready
-			GameEvents.onGUIApplicationLauncherReady.Add( Load );
-			GameEvents.onGUIApplicationLauncherDestroyed.Add( Unload );
 
-			// Callbacks for F2
-			GameEvents.onHideUI.Add( OnHideUI );
-			GameEvents.onShowUI.Add( OnShowUI );
 
+            // Checklist window
+            _checklistWindow = new ScienceWindow(this, _settingsWindow, _helpWindow);
+            _checklistWindow.OnCloseEvent += OnChecklistWindowClosed;
+            _checklistWindow.OnOpenEvent += OnChecklistWindowOpened;
 
-			DontDestroyOnLoad( this );
 
-			
-			_logger.Trace( "Done Start" );
-		}
 
+            // ShipState Window
+            _shipStateWindow = new ShipStateWindow(this);
 
-		
-		// Called by Unity when the application is destroyed.
-		public void OnApplicationQuit( )
-		{
-//			_logger.Trace( "OnApplicationQuit" );
-			RemoveButtons( );
-		}
 
 
+            // Save and load checklist window config when the game scene is changed
+            // We are only visible in some scenes
+            GameEvents.onGameSceneSwitchRequested.Add(new EventData<GameEvents.FromToAction<GameScenes, GameScenes>>.OnEvent(this.OnGameSceneSwitch));
 
-		// Called by Unity when this instance is destroyed.
-		public void OnDestroy( )
-		{
-//			_logger.Trace( "OnDestroy" );
 
-			// Music Mute - Unhook from the scene switch events
-            GameEvents.onGameSceneSwitchRequested.Remove( this.onGameSceneSwitchRequested );
-            GameEvents.onLevelWasLoaded.Remove( this.onLevelWasLoaded );
-			RemoveButtons( );
-		}
 
+            // Callbacks for buttons - we init when the "Launcher" toolbar is ready
+            GameEvents.onGUIApplicationLauncherReady.Add(Load);
+            GameEvents.onGUIApplicationLauncherDestroyed.Add(Unload);
 
+            // Callbacks for F2
+            GameEvents.onHideUI.Add(OnHideUI);
+            GameEvents.onShowUI.Add(OnShowUI);
 
-		// Called by Unity once per frame.
-		public void Update( )
-		{
-			if( ResearchAndDevelopment.Instance == null )
-				return;
 
-			if( PartLoader.Instance == null )
-				return;
+            DontDestroyOnLoad(this);
 
-			if( UiActive( ) && ( _checklistWindow.IsVisible || _statusWindow.IsVisible( ) ) )
-			{
-				ScienceEventHandler.Update( );
-			}
-		}
 
+            _logger.Trace("Done Start");
+        }
 
 
-		// Called by Unity to draw the GUI - can be called many times per frame.
-		public void OnGUI( )
-		{
-			if( UiActive( ) )
-			{
-				if( _checklistWindow.IsVisible )
-				{
-					_checklistWindow.Draw( );
-					_settingsWindow.DrawWindow( );
-					_helpWindow.DrawWindow( );
-				}
-				if( _statusWindow.IsVisible( ) )
-				{
-					if( HighLogic.LoadedScene == GameScenes.FLIGHT && FlightGlobals.ActiveVessel != null )
-						_statusWindow.DrawWindow( );
-				}
-				if( _shipStateWindow.IsVisible( ) && Config.SelectedObjectWindow )
-				{
-					if( HighLogic.LoadedScene == GameScenes.TRACKSTATION )
-						_shipStateWindow.DrawWindow( );
-				}
-			}
-		}
 
-		#endregion
+        // Called by Unity when the application is destroyed.
+        public void OnApplicationQuit()
+        {
+            //			_logger.Trace( "OnApplicationQuit" );
+            RemoveButtons();
+        }
 
 
 
-		#region METHODS Unity Event Callbacks
-		// Save and load checklist window config when the game scene is changed
-		private void OnGameSceneSwitch( GameEvents.FromToAction<GameScenes, GameScenes> Data )
-		{
-//			_logger.Trace( "OnGameSceneSwitch FROM " + Data.from.ToString( ) );
-			SwitchingGameScene( Data.from, Data.to );
-		}
+        // Called by Unity when this instance is destroyed.
+        public void OnDestroy()
+        {
+            //			_logger.Trace( "OnDestroy" );
 
+            // Music Mute - Unhook from the scene switch events
+            GameEvents.onGameSceneSwitchRequested.Remove(this.onGameSceneSwitchRequested);
+            GameEvents.onLevelWasLoaded.Remove(this.onLevelWasLoaded);
+            RemoveButtons();
+        }
 
-		private void SwitchingGameScene( GameScenes From, GameScenes To )
-		{
-			HammerMusicMute( ); // Ensure we enforce music volume anyway
 
 
-			// Checklist window settings
-			if( GameHelper.AllowChecklistWindow( From ) )
-			{
-				WindowSettings W =_checklistWindow.BuildSettings( );
-				W._scene = From;
-				Config.SetWindowConfig( W );
-			}
-
-			if( GameHelper.AllowChecklistWindow( To ) )
-			{
-				WindowSettings W = Config.GetWindowConfig( WINDOW_NAME_CHECKLIST, To );
-				_checklistWindow.ApplySettings( W );
-			}
-
-
-
-			// Status window settings
-			if( GameHelper.AllowStatusWindow( From ) )
-			{
-				WindowSettings W =_statusWindow.BuildSettings( );
-				W._scene = From;
-				Config.SetWindowConfig( W );
-			}
-
-			if( GameHelper.AllowStatusWindow( To ) )
-			{
-				WindowSettings W = Config.GetWindowConfig( WINDOW_NAME_STATUS, To );
-				_statusWindow.ApplySettings( W );
-			}
+        // Called by Unity once per frame.
+        public void Update()
+        {
+            if (ResearchAndDevelopment.Instance == null)
+                return;
 
+            if (PartLoader.Instance == null)
+                return;
 
+            if (UiActive() && (_checklistWindow.IsVisible || _statusWindow.IsVisible()))
+            {
+                ScienceEventHandler.Update();
+            }
+        }
 
-			// Selected Object window settings
-			if( GameScenes.TRACKSTATION == From )
-			{
-				WindowSettings W =_shipStateWindow.BuildSettings( );
-				W._scene = From;
-				Config.SetWindowConfig( W );
-			}
 
-			if( GameScenes.TRACKSTATION == To )
-			{
-				WindowSettings W = Config.GetWindowConfig( WINDOW_NAME_SHIP_STATE, To );
-				_shipStateWindow.ApplySettings( W );
-			}
-		}
 
+        // Called by Unity to draw the GUI - can be called many times per frame.
+        public void OnGUI()
+        {
+            if (UiActive())
+            {
+                if (_checklistWindow.IsVisible)
+                {
+                    _checklistWindow.Draw();
+                    _settingsWindow.DrawWindow();
+                    _helpWindow.DrawWindow();
+                }
+                if (_statusWindow.IsVisible())
+                {
+                    if (HighLogic.LoadedScene == GameScenes.FLIGHT && FlightGlobals.ActiveVessel != null)
+                        _statusWindow.DrawWindow();
+                }
+                if (_shipStateWindow.IsVisible() && Config.SelectedObjectWindow)
+                {
+                    if (HighLogic.LoadedScene == GameScenes.TRACKSTATION)
+                        _shipStateWindow.DrawWindow();
+                }
+            }
+        }
 
+        #endregion
 
 
-
 
+        #region METHODS Unity Event Callbacks
+        // Save and load checklist window config when the game scene is changed
+        private void OnGameSceneSwitch(GameEvents.FromToAction<GameScenes, GameScenes> Data)
+        {
+            //			_logger.Trace( "OnGameSceneSwitch FROM " + Data.from.ToString( ) );
+            SwitchingGameScene(Data.from, Data.to);
+        }
 
-		// Initializes the addon if it hasn't already been loaded.
-		// Callback from onGUIApplicationLauncherReady
-		private void Load( )
-		{
-			HammerMusicMute( ); // Ensure we enforce music volume anyway
 
-			_logger.Trace( "Load" );
-			if( !GameHelper.AllowChecklistWindow( ) )
-			{
-//				_logger.Info( "Ui is hidden in this scene" );
-				_active = false;
-				RemoveButtons( );
-				return;
-			}
-			
-			if( _active )
-			{
-				_logger.Trace( "Already loaded." );
-				return;
-			}
-			
-			if( HighLogic.CurrentGame.Mode != Game.Modes.CAREER && HighLogic.CurrentGame.Mode != Game.Modes.SCIENCE_SANDBOX )
-			{
-				_logger.Info( "Game type is " + HighLogic.CurrentGame.Mode + ". Deactivating." );
-				_active = false;
-				return;
-			}
-			_logger.Info( "Game type is " + HighLogic.CurrentGame.Mode + ". Activating." );
-			_active = true;
-			SwitchingGameScene( GameScenes.MAINMENU, HighLogic.LoadedScene ); // Get correct visibility now we are active
+        private void SwitchingGameScene(GameScenes From, GameScenes To)
+        {
+            HammerMusicMute(); // Ensure we enforce music volume anyway
 
-//			_logger.Trace( "Adding Buttons" );
-			InitButtons( );
-//			_logger.Trace( "Buttons Added" );
-			_launcherVisible = true;
-			ApplicationLauncher.Instance.AddOnShowCallback( Launcher_Show );
-			ApplicationLauncher.Instance.AddOnHideCallback( Launcher_Hide );
-		}
-
-
-
-		// Unloads the addon if it has been loaded.
-		// Callback from onGUIApplicationLauncherDestroyed
-		private void Unload( )
-		{
-			if( !_active )
-			{
-//				_logger.Trace( "Already unloaded." );
-				return;
-			}
-			_active = false;
-
-//			_logger.Trace( "Removing Buttons" );
-			RemoveButtons( );
-//			_logger.Trace( "Removing Callbacks" );
-			ApplicationLauncher.Instance.RemoveOnShowCallback( Launcher_Show );
-			ApplicationLauncher.Instance.RemoveOnHideCallback( Launcher_Hide );
-			_launcherVisible = false;
-
-//			_logger.Trace( "Unload Done" );
-		}
-
-
-
-		// F2 support
-		void OnHideUI( )
-		{
-			_UiHidden = true;
-		}
-		void OnShowUI( )
-		{
-			_UiHidden = false;
-		}
-
-
-
-		// Called when the KSP toolbar is shown.
-		private void Launcher_Show( )
-		{
-			if( !_active )
-				return;
-
-//			_logger.Trace("Launcher_Show");
-			_launcherVisible = true;
-		}
-
-
-
-		// Called when the KSP toolbar is hidden.
-		private void Launcher_Hide( )
-		{
-			if( !_active )
-				return;
-//			_logger.Trace( "Launcher_Hide" );
-			_launcherVisible = false;
-		}
-		#endregion
-
-
-
-		#region METHODS Checklist window callbacks
-		// Registered with the button
-		// Called when the toolbar button for the checklist window is toggled on.
-		private void ChecklistButton_Open( object sender, EventArgs e )
-		{
-			if( !_active )
-				return;
-//			_logger.Trace( "ChecklistButton_Open" );
-			UpdateChecklistVisibility( true );
-		}
-
-
-
-		// Registered with the button
-		// Called when the toolbar button for the checklist window is toggled off.
-		private void ChecklistButton_Close( object sender, EventArgs e )
-		{
-			if( !_active )
-				return;
-//			_logger.Trace( "ChecklistButton_Close" );
-			UpdateChecklistVisibility( false );
-		}
-
-
-
-		private void ChecklistButton_RightClick( object sender, EventArgs e )
-		{
-			if( Config.RighClickMutesMusic )
-			{
-				// Toggle the muted state
-					Muted = !Muted;
-					ScreenMessages.PostScreenMessage( "[x] Science! - Music Mute" );
-			}
-			else
-			{
-				if( _active && UiActive( ) )
-				{
-					if( GameHelper.AllowStatusWindow( ) )
-					{
-						bool NewVisibility = !_statusWindow.IsVisible( );
-						_statusWindow.SetVisible( NewVisibility );
-						UpdateStatusVisibility( NewVisibility );
-
-						if( _statusWindow.IsVisible( ) )
-						{
-							if( _statusButton != null )
-								_statusButton.SetOn( );
-							ScienceEventHandler.ScheduleExperimentUpdate(seconds: 0.1f);
-						}
-						else
-						{
-							if( _statusButton != null )
-								_statusButton.SetOff( );
-						}
-					}
-				}
-			}
-		}
-
-
-
-		// We add this to our window as a callback
-		// It tells us when the window is closed so we can keep the button in sync
-		public void OnChecklistWindowClosed( object sender, EventArgs e )
-		{
-//			_logger.Trace( "OnChecklistWindowClosed" ); 
-			if( _checklistButton != null )
-				_checklistButton.SetOff( );
-			UpdateChecklistVisibility( false );
-		}
-
-
-
-		// We add this to our window as a callback
-		// It tells us when the window is opened so we can keep the button in sync
-		public void OnChecklistWindowOpened( object sender, EventArgs e )
-		{
-//			_logger.Trace( "OnChecklistWindowOpened" );
-			if( _checklistButton != null )
-				_checklistButton.SetOn( );
-			UpdateChecklistVisibility( true );
-		}
-
-
-
-		// Let a window suggest settings are saved.
-		public void OnSettingsDirty( object sender, EventArgs e )
-		{
-			if( GameHelper.AllowChecklistWindow( ) )
-			{
-				WindowSettings W =_checklistWindow.BuildSettings( );
-				W._scene = HighLogic.LoadedScene;
-				Config.SetWindowConfig( W );
-			}
-		}
-
-
-		#endregion
-
-
-
-		#region METHODS Status window callbacks
-
-		// The noise is played on this object because we have access to "gameObject"
-		// To play the noise the status window pops this event
-		public void OnPlayNoise( object sender, EventArgs e )
-		{
-//			_logger.Trace( "OnPlayNoise" );
-			_alertNoise.PlaySound( );
-		}
-
-
-
-		// Called when the toolbar button for the status window is toggled on.
-		private void StatusButton_Open( object sender, EventArgs e )
-		{
-			if( !_active )
-				return;
-//			_logger.Trace( "StatusButton_Open" );
-			UpdateStatusVisibility( true );
-		}
-
-
-
-		// Called when the toolbar button for the status window is toggled off.
-		private void StatusButton_Close( object sender, EventArgs e )
-		{
-			if( !_active )
-				return;
-//			_logger.Trace( "StatusButton_Close" );
-			UpdateStatusVisibility( false );
-		}
-
-
-
-		// We add this to our window as a callback
-		// It tells us when the window is closed so we can keep the button in sync
-		public void OnStatusWindowClosed( object sender, EventArgs e )
-		{
-//			_logger.Trace( "OnStatusWindowClosed" ); 
-			if( _statusButton != null )
-				_statusButton.SetOff( );
-			UpdateStatusVisibility( false );
-		}
-
-
-
-		// We add this to our window as a callback
-		// It tells us when the window is opened so we can keep the button in sync
-		public void OnStatusWindowOpened( object sender, EventArgs e )
-		{
-//			_logger.Trace( "OnStatusWindowOpened" );
-			if( _statusButton != null )
-				_statusButton.SetOn( );
-			UpdateStatusVisibility( true );
-		}
-		#endregion
-
-
-
-		#region METHODS Settings callbacks
-		// We register this with the settings window.
-		// When the blizzy toolbar setting changes this gets popped so we can recreate the buttons
-		private void Settings_UseBlizzysToolbarChanged( object sender, EventArgs e )
-		{
-			InitButtons( );
-
-
-			// Need to set this
-			if( _checklistWindow.IsVisible )
-				_checklistButton.SetOn( );
-			else
-				_checklistButton.SetOff( );
-
-			if( _statusButton != null )
+
+            // Checklist window settings
+            if (GameHelper.AllowChecklistWindow(From))
+            {
+                WindowSettings W = _checklistWindow.BuildSettings();
+                W._scene = From;
+                Config.SetWindowConfig(W);
+            }
+
+            if (GameHelper.AllowChecklistWindow(To))
+            {
+                WindowSettings W = Config.GetWindowConfig(WINDOW_NAME_CHECKLIST, To);
+                _checklistWindow.ApplySettings(W);
+            }
+
+
+
+            // Status window settings
+            if (GameHelper.AllowStatusWindow(From))
+            {
+                WindowSettings W = _statusWindow.BuildSettings();
+                W._scene = From;
+                Config.SetWindowConfig(W);
+            }
+
+            if (GameHelper.AllowStatusWindow(To))
+            {
+                WindowSettings W = Config.GetWindowConfig(WINDOW_NAME_STATUS, To);
+                _statusWindow.ApplySettings(W);
+            }
+
+
+
+            // Selected Object window settings
+            if (GameScenes.TRACKSTATION == From)
+            {
+                WindowSettings W = _shipStateWindow.BuildSettings();
+                W._scene = From;
+                Config.SetWindowConfig(W);
+            }
+
+            if (GameScenes.TRACKSTATION == To)
+            {
+                WindowSettings W = Config.GetWindowConfig(WINDOW_NAME_SHIP_STATE, To);
+                _shipStateWindow.ApplySettings(W);
+            }
+        }
+
+
+
+
+
+
+
+        // Initializes the addon if it hasn't already been loaded.
+        // Callback from onGUIApplicationLauncherReady
+        private void Load()
+        {
+            HammerMusicMute(); // Ensure we enforce music volume anyway
+
+            _logger.Trace("Load");
+            if (!GameHelper.AllowChecklistWindow())
+            {
+                //				_logger.Info( "Ui is hidden in this scene" );
+                _active = false;
+                RemoveButtons();
+                return;
+            }
+
+            if (_active)
+            {
+                _logger.Trace("Already loaded.");
+                return;
+            }
+
+            if (HighLogic.CurrentGame.Mode != Game.Modes.CAREER && HighLogic.CurrentGame.Mode != Game.Modes.SCIENCE_SANDBOX)
+            {
+                _logger.Info("Game type is " + HighLogic.CurrentGame.Mode + ". Deactivating.");
+                _active = false;
+                return;
+            }
+            _logger.Info("Game type is " + HighLogic.CurrentGame.Mode + ". Activating.");
+            _active = true;
+            SwitchingGameScene(GameScenes.MAINMENU, HighLogic.LoadedScene); // Get correct visibility now we are active
+
+            //			_logger.Trace( "Adding Buttons" );
+            InitButtons();
+            //			_logger.Trace( "Buttons Added" );
+            _launcherVisible = true;
+            ApplicationLauncher.Instance.AddOnShowCallback(Launcher_Show);
+            ApplicationLauncher.Instance.AddOnHideCallback(Launcher_Hide);
+        }
+
+
+
+        // Unloads the addon if it has been loaded.
+        // Callback from onGUIApplicationLauncherDestroyed
+        private void Unload()
+        {
+            if (!_active)
+            {
+                //				_logger.Trace( "Already unloaded." );
+                return;
+            }
+            _active = false;
+
+            //			_logger.Trace( "Removing Buttons" );
+            RemoveButtons();
+            //			_logger.Trace( "Removing Callbacks" );
+            ApplicationLauncher.Instance.RemoveOnShowCallback(Launcher_Show);
+            ApplicationLauncher.Instance.RemoveOnHideCallback(Launcher_Hide);
+            _launcherVisible = false;
+
+            //			_logger.Trace( "Unload Done" );
+        }
+
+
+
+        // F2 support
+        void OnHideUI()
+        {
+            _UiHidden = true;
+        }
+        void OnShowUI()
+        {
+            _UiHidden = false;
+        }
+
+
+
+        // Called when the KSP toolbar is shown.
+        private void Launcher_Show()
+        {
+            if (!_active)
+                return;
+
+            //			_logger.Trace("Launcher_Show");
+            _launcherVisible = true;
+        }
+
+
+
+        // Called when the KSP toolbar is hidden.
+        private void Launcher_Hide()
+        {
+            if (!_active)
+                return;
+            //			_logger.Trace( "Launcher_Hide" );
+            _launcherVisible = false;
+        }
+        #endregion
+
+
+
+        #region METHODS Checklist window callbacks
+        // Registered with the button
+        // Called when the toolbar button for the checklist window is toggled on.
+        private void ChecklistButton_Open(object sender, EventArgs e)
+        {
+            if (!_active)
+                return;
+            //			_logger.Trace( "ChecklistButton_Open" );
+            UpdateChecklistVisibility(true);
+        }
+
+
+
+        // Registered with the button
+        // Called when the toolbar button for the checklist window is toggled off.
+        private void ChecklistButton_Close(object sender, EventArgs e)
+        {
+            if (!_active)
+                return;
+            //			_logger.Trace( "ChecklistButton_Close" );
+            UpdateChecklistVisibility(false);
+        }
+
+
+
+        private void ChecklistButton_RightClick(object sender, EventArgs e)
+        {
+            if (Config.RighClickMutesMusic)
+            {
+                // Toggle the muted state
+                Muted = !Muted;
+                ScreenMessages.PostScreenMessage("[x] Science! - Music Mute");
+            }
+            else
+            {
+                if (_active && UiActive())
+                {
+                    if (GameHelper.AllowStatusWindow())
+                    {
+                        bool NewVisibility = !_statusWindow.IsVisible();
+                        _statusWindow.SetVisible(NewVisibility);
+                        UpdateStatusVisibility(NewVisibility);
+
+                        if (_statusWindow.IsVisible())
+                        {
+                            //if( _statusButton != null )
+                            //	_statusButton.SetOn( );
+                            if (statusToolbarControl != null)
+                                statusToolbarControl.SetTrue(false);
+                            ScienceEventHandler.ScheduleExperimentUpdate(seconds: 0.1f);
+                        }
+                        else
+                        {
+                            //if( _statusButton != null )
+                            //	_statusButton.SetOff( );
+                            if (statusToolbarControl != null)
+                                statusToolbarControl.SetFalse(true);
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        // We add this to our window as a callback
+        // It tells us when the window is closed so we can keep the button in sync
+        public void OnChecklistWindowClosed(object sender, EventArgs e)
+        {
+            //			_logger.Trace( "OnChecklistWindowClosed" ); 
+            //if( _checklistButton != null )
+            //	_checklistButton.SetOff( );
+            if (checklistToolbarControl != null)
+                checklistToolbarControl.SetFalse(false);
+            UpdateChecklistVisibility(false);
+        }
+
+
+
+        // We add this to our window as a callback
+        // It tells us when the window is opened so we can keep the button in sync
+        public void OnChecklistWindowOpened(object sender, EventArgs e)
+        {
+            //			_logger.Trace( "OnChecklistWindowOpened" );
+            //if( _checklistButton != null )
+            //	_checklistButton.SetOn( );
+            if (checklistToolbarControl != null)
+                checklistToolbarControl.SetTrue(true);
+            UpdateChecklistVisibility(true);
+        }
+
+
+
+        // Let a window suggest settings are saved.
+        public void OnSettingsDirty(object sender, EventArgs e)
+        {
+            if (GameHelper.AllowChecklistWindow())
+            {
+                WindowSettings W = _checklistWindow.BuildSettings();
+                W._scene = HighLogic.LoadedScene;
+                Config.SetWindowConfig(W);
+            }
+        }
+
+
+        #endregion
+
+
+
+        #region METHODS Status window callbacks
+
+        // The noise is played on this object because we have access to "gameObject"
+        // To play the noise the status window pops this event
+        public void OnPlayNoise(object sender, EventArgs e)
+        {
+            //			_logger.Trace( "OnPlayNoise" );
+            _alertNoise.PlaySound();
+        }
+
+
+
+        // Called when the toolbar button for the status window is toggled on.
+        private void StatusButton_Open() // object sender, EventArgs e )
+        {
+            if (!_active)
+                return;
+            //			_logger.Trace( "StatusButton_Open" );
+            UpdateStatusVisibility(true);
+        }
+
+
+
+        // Called when the toolbar button for the status window is toggled off.
+        private void StatusButton_Close() // object sender, EventArgs e )
+        {
+            if (!_active)
+                return;
+            //			_logger.Trace( "StatusButton_Close" );
+            UpdateStatusVisibility(false);
+        }
+
+
+
+        // We add this to our window as a callback
+        // It tells us when the window is closed so we can keep the button in sync
+        public void OnStatusWindowClosed(object sender, EventArgs e)
+        {
+            //			_logger.Trace( "OnStatusWindowClosed" ); 
+            //if( _statusButton != null )
+            //	_statusButton.SetOff( );
+            if (statusToolbarControl != null)
+                statusToolbarControl.SetTrue(false);
+            UpdateStatusVisibility(false);
+        }
+
+
+
+        // We add this to our window as a callback
+        // It tells us when the window is opened so we can keep the button in sync
+        public void OnStatusWindowOpened(object sender, EventArgs e)
+        {
+            //			_logger.Trace( "OnStatusWindowOpened" );
+            //if( _statusButton != null )
+            //	_statusButton.SetOn( );
+            if (statusToolbarControl != null)
+                statusToolbarControl.SetFalse(false);
+            UpdateStatusVisibility(true);
+        }
+        #endregion
+
+
+
+#region METHODS Settings callbacks
+
+#if false
+        // We register this with the settings window.
+        // When the blizzy toolbar setting changes this gets popped so we can recreate the buttons
+        private void Settings_UseBlizzysToolbarChanged(object sender, EventArgs e)
+        {
+            InitButtons();
+
+
+            // Need to set this
+            if (_checklistWindow.IsVisible)
+                //_checklistButton.SetOn( );
+                checklistToolbarControl.SetTrue(false);
+            else
+                //_checklistButton.SetOff();
+                checklistToolbarControl.SetFalse(false);
+#if false
+			if ( _statusButton != null )
 			{
 				if( _statusWindow.IsVisible( ) )
 					_statusButton.SetOn( );
 				else
 					_statusButton.SetOff( );
 			}
-		}
+#endif
 
 
-		private void Settings_RighClickMutesMusicChanged( object sender, EventArgs e )
-		{
-			InitButtons( );
+            if (statusToolbarControl != null)
+            {
+                if (_statusWindow.IsVisible())
+                    statusToolbarControl.SetTrue(false);
+                else
+                    statusToolbarControl.SetFalse(false);
+            }
+
+        }
+#endif
+
+        private void Settings_RighClickMutesMusicChanged(object sender, EventArgs e)
+        {
+            InitButtons();
 
 
-			// Need to set this
-			if( _checklistWindow.IsVisible )
-				_checklistButton.SetOn( );
-			else
-				_checklistButton.SetOff( );
-
-			if( _statusButton != null )
+            // Need to set this
+            if (_checklistWindow.IsVisible)
+                //_checklistButton.SetOn( );
+                checklistToolbarControl.SetTrue(false);
+            else
+                //_checklistButton.SetOff();
+                checklistToolbarControl.SetFalse(false);
+#if false
+			if ( _statusButton != null )
 			{
 				if( _statusWindow.IsVisible( ) )
 					_statusButton.SetOn( );
 				else
 					_statusButton.SetOff( );
 			}
-		}
+#endif
+            if (checklistToolbarControl != null)
+            {
+                if (_statusWindow.IsVisible())
+                    checklistToolbarControl.SetTrue(false);
+                else
+                    checklistToolbarControl.SetFalse(false);
+            }
+
+        }
 
 
 
-
-
-		#endregion
-
-
-
-		#region METHODS General Toolbar functions
-
-		// Initializes the toolbar button.
-		private void InitButtons( )
-		{
-//			_logger.Info( "InitButtons" );
-			RemoveButtons( );
-			AddButtons( );
-//			_logger.Info( "InitButtons Done" );
-		}
+#endregion
 
 
 
-		// Add the buttons
-		private void AddButtons( )
-		{
-			Texture2D StockTexture;
+#region METHODS General Toolbar functions
+
+        // Initializes the toolbar button.
+        private void InitButtons()
+        {
+            //			_logger.Info( "InitButtons" );
+            RemoveButtons();
+            AddButtons();
+            //			_logger.Info( "InitButtons Done" );
+        }
 
 
+        internal const string MODID = "[x] Science";
+        internal const string MODNAME = "[x] Science!";
 
-			_checklistButton = new UnifiedButton( );
+        internal const string WINDOW_CHECKLIST = "[x] Science Checklist";
+
+        void LeftButtonToggle()
+        {
+            if (checklistToolbarControl.Enabled)
+                ChecklistButton_Open(null, null);
+            else
+                ChecklistButton_Close(null, null);
+        }
+        void RightButton()
+        {
+            ChecklistButton_RightClick(null, null);
+        }
 
 
+        // Add the buttons
+        private void AddButtons()
+        {
+            Texture2D StockTexture;
+
+            if (statusToolbarControl == null)
+            {
+                statusToolbarControl = gameObject.AddComponent<ToolbarControl>();
+                statusToolbarControl.AddToAllToolbars(null, null,
+                ApplicationLauncher.AppScenes.SPACECENTER |
+                ApplicationLauncher.AppScenes.FLIGHT |
+                ApplicationLauncher.AppScenes.MAPVIEW |
+                ApplicationLauncher.AppScenes.VAB |
+                ApplicationLauncher.AppScenes.SPH |
+                ApplicationLauncher.AppScenes.TRACKSTATION,
+                MODID,
+                    "xScienceButton1",
+                    "[x]_Science!/PluginData/Icons/icon",
+                    "[x]_Science!/PluginData/Icons/icon-small",
+                    MODNAME
+                );
+                statusToolbarControl.AddLeftRightClickCallbacks(LeftButtonToggle, RightButton);
+            }
+
+            //_checklistButton = new UnifiedButton( gameObject, 1);
+
+#if false
 			if( BlizzysToolbarButton.IsAvailable )
 			{
 				_checklistButton.UseBlizzyIfPossible = Config.UseBlizzysToolbar;
@@ -654,7 +728,6 @@ namespace ScienceChecklist {
 
 
 
-
 			StockTexture = TextureHelper.FromResource( "ScienceChecklist.icons.icon.png", 38, 38 );
 /*			if( StockTexture != null )
 				_logger.Info( "Load : Stock texture" );
@@ -677,12 +750,13 @@ namespace ScienceChecklist {
 			_checklistButton.Add( );
 
 
+#endif
 
 
-			if( Config.RighClickMutesMusic ) // So we need both buttons
-			{
-				_statusButton = new UnifiedButton( );
-
+            if (Config.RighClickMutesMusic) // So we need both buttons
+            {
+#if false
+				_statusButton = new UnifiedButton(gameObject, 2 );
 
 				if( BlizzysToolbarButton.IsAvailable )
 				{
@@ -707,6 +781,8 @@ namespace ScienceChecklist {
 					_statusButton.BlizzyVisibility = new GameScenesVisibility( GameScenes.FLIGHT );
 	//				_logger.Info( "Load : Set Blizzy Stuff" );
 				}
+				UnifiedButton.toolbarControl.SetTexture("[x]_Science!/PluginData/Icons/icon-status", "[x]_Science!/PluginData/Icons/icon-status-small");
+
 
 
 
@@ -726,98 +802,114 @@ namespace ScienceChecklist {
 				_statusButton.ButtonOn += StatusButton_Open;
 				_statusButton.ButtonOff += StatusButton_Close;
 				_statusButton.Add( );
-			}
-		}
+#endif
+                if (checklistToolbarControl == null)
+                {
+                    checklistToolbarControl = gameObject.AddComponent<ToolbarControl>();
+                    checklistToolbarControl.AddToAllToolbars(StatusButton_Open, StatusButton_Close,
+                    ApplicationLauncher.AppScenes.FLIGHT |
+                    ApplicationLauncher.AppScenes.MAPVIEW,
+                    MODID,
+                    "xScienceButton2",
+                    "[x]_Science!/PluginData/Icons/icon-status",
+                    "[x]_Science!/PluginData/Icons/icon-status-small",
+                    MODNAME
+                    );
+                }
+            }
+        }
 
 
 
-		private void RemoveButtons( )
-		{
-			if( _checklistButton != null )
-			{
-				_checklistButton.ButtonOn -= ChecklistButton_Open;
-				_checklistButton.ButtonOff -= ChecklistButton_Close;
-				_checklistButton.RightClick -= ChecklistButton_RightClick;
-				_checklistButton.Remove( );
-				_checklistButton = null;
-			}
-			if( _statusButton != null )
-			{
-				_statusButton.ButtonOn -= StatusButton_Open;
-				_statusButton.ButtonOff -= StatusButton_Close;
-				_statusButton.Remove( );
-				_statusButton = null;
-			}
-		}
-		#endregion
+        private void RemoveButtons()
+        {
+#if false
+            if (_checklistButton != null)
+            {
+                _checklistButton.ButtonOn -= ChecklistButton_Open;
+                _checklistButton.ButtonOff -= ChecklistButton_Close;
+                _checklistButton.RightClick -= ChecklistButton_RightClick;
+                _checklistButton.Remove();
+                _checklistButton = null;
+            }
+            if (_statusButton != null)
+            {
+                _statusButton.ButtonOn -= StatusButton_Open;
+                _statusButton.ButtonOff -= StatusButton_Close;
+                _statusButton.Remove();
+                _statusButton = null;
+            }
+#endif
+        }
+#endregion
 
 
 
-		#region METHODS Window helper functions
-		// Shows or hides the Checklist Window if the KSP toolbar is visible and the toolbar button is toggled on.
-		private void UpdateChecklistVisibility( bool NewVisibility )
-		{
-			if( !_active )
-				return;
+#region METHODS Window helper functions
+        // Shows or hides the Checklist Window if the KSP toolbar is visible and the toolbar button is toggled on.
+        private void UpdateChecklistVisibility(bool NewVisibility)
+        {
+            if (!_active)
+                return;
 
-//			_logger.Trace( "UpdateChecklistVisibility" );
-			_checklistWindow.IsVisible = NewVisibility;
-			if( _checklistWindow.IsVisible )
-				ScienceEventHandler.ScheduleExperimentUpdate(seconds: 0.1f);
-		}
-
-
-
-		// Shows or hides the Status Window if the KSP toolbar is visible and the toolbar button is toggled on.
-		private void UpdateStatusVisibility( bool NewVisibility )
-		{
-			if( !_active )
-				return;
-
-//			_logger.Trace( "UpdateStatusVisibility" );
-			_statusWindow.SetVisible( NewVisibility );
-			if( _statusWindow.IsVisible( ) )
-				ScienceEventHandler.ScheduleExperimentUpdate(seconds: 0.1f);
-		}
-		
-
-
-		// Teeny-tiny helper function.  Are we drawing windows or not
-		private bool UiActive( )
-		{
-			if( ( !_UiHidden ) && _active && _launcherVisible )
-				return true;
-			return false;
-		}
-		#endregion
+            //			_logger.Trace( "UpdateChecklistVisibility" );
+            _checklistWindow.IsVisible = NewVisibility;
+            if (_checklistWindow.IsVisible)
+                ScienceEventHandler.ScheduleExperimentUpdate(seconds: 0.1f);
+        }
 
 
 
-		#region METHODS Mute functions
-		// Default values
-			bool muted = false;
-			float oldVolume = 0.40f;
+        // Shows or hides the Status Window if the KSP toolbar is visible and the toolbar button is toggled on.
+        private void UpdateStatusVisibility(bool NewVisibility)
+        {
+            if (!_active)
+                return;
+
+            //			_logger.Trace( "UpdateStatusVisibility" );
+            _statusWindow.SetVisible(NewVisibility);
+            if (_statusWindow.IsVisible())
+                ScienceEventHandler.ScheduleExperimentUpdate(seconds: 0.1f);
+        }
 
 
 
-		private void HammerMusicMute( )
-		{
-			if( muted )
-				 MusicLogic.SetVolume( 0f, 0f );
-		}
+        // Teeny-tiny helper function.  Are we drawing windows or not
+        private bool UiActive()
+        {
+            if ((!_UiHidden) && _active && _launcherVisible)
+                return true;
+            return false;
+        }
+#endregion
+
+
+
+#region METHODS Mute functions
+        // Default values
+        bool muted = false;
+        float oldVolume = 0.40f;
+
+
+
+        private void HammerMusicMute()
+        {
+            if (muted)
+                MusicLogic.SetVolume(0f, 0f);
+        }
 
 
         // Runs when scene switch is requested
-        private void onGameSceneSwitchRequested( GameEvents.FromToAction<GameScenes, GameScenes> action )
+        private void onGameSceneSwitchRequested(GameEvents.FromToAction<GameScenes, GameScenes> action)
         {
-			// The game likes to play music when we switch scenes, so we have to tell it to shut up once more
-				HammerMusicMute( );
+            // The game likes to play music when we switch scenes, so we have to tell it to shut up once more
+            HammerMusicMute();
         }
 
         // Runs when scene is done switching
-        private void onLevelWasLoaded( GameScenes action )
+        private void onLevelWasLoaded(GameScenes action)
         {
-			HammerMusicMute( ); // Ensure we enforce music volume anyway
+            HammerMusicMute(); // Ensure we enforce music volume anyway
         }
 
         public bool Muted
@@ -836,19 +928,19 @@ namespace ScienceChecklist {
 
                     // Mute the music
                     MusicLogic.SetVolume(0f, 0f);
- //                   _logger.Info("[MusicMute]: Muted music");
+                    //                   _logger.Info("[MusicMute]: Muted music");
                 }
                 // Unmute
                 else
                 {
                     // Set the music volume to what it was before
                     MusicLogic.SetVolume(oldVolume, oldVolume);
- //                   _logger.Info("[MusicMute]: Set music volume to: " + oldVolume);
+                    //                   _logger.Info("[MusicMute]: Set music volume to: " + oldVolume);
                 }
 
                 muted = value;
             }
         }
-		#endregion
-	}
+#endregion
+    }
 }

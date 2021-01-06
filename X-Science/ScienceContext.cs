@@ -239,38 +239,43 @@ namespace ScienceChecklist
 
 
 			_experiments.Clear( );
-			for( int x = 0; x < PartLoader.LoadedPartsList.Count; x++ )
+			for (int x = 0; x < PartLoader.LoadedPartsList.Count; x++)
 			{
-				AvailablePart P = PartLoader.LoadedPartsList[ x ];
+				AvailablePart P = PartLoader.LoadedPartsList[x];
 				List<ModuleScienceExperiment> Modules;
-
-				// In KSP 1.8.0, this can throw a NullReferenceException.
-				try {
-					Modules = P.partPrefab.FindModulesImplementing<ModuleScienceExperiment>( );
-				}
-				catch (NullReferenceException e) {
-					_logger.Info( P.name + " threw NullReferenceException in " + e.TargetSite );
-					continue;
-				}
-
-				for( int y = 0; y < Modules.Count; y++ )
+				if (P.name.Length < 9 || P.name.Substring(0, 9) != "kerbalEVA")
 				{
-					ModuleScienceExperiment Module = Modules[ y ];
-					if( Module != null )
+					// In KSP 1.8.0, this can throw a NullReferenceException.
+					try
 					{
-						if( Module.experimentID != null )
+						if (P.partPrefab.Modules.Contains<ModuleScienceExperiment>())
+							Modules = P.partPrefab.FindModulesImplementing<ModuleScienceExperiment>();
+						else
+							continue;
+					}
+					catch (NullReferenceException e)
+					{
+						_logger.Info(P.name + " threw NullReferenceException in " + e.TargetSite);
+						continue;
+					}
+					for (int y = 0; y < Modules.Count; y++)
+					{
+						ModuleScienceExperiment Module = Modules[y];
+						if (Module != null)
 						{
-							ScienceExperiment Experiment = ResearchAndDevelopment.GetExperiment( Module.experimentID );
-							if( Experiment != null )
+							if (Module.experimentID != null)
 							{
-								if( !_experiments.ContainsKey( Experiment ) )
-									_experiments.Add( Experiment, Module );
+								ScienceExperiment Experiment = ResearchAndDevelopment.GetExperiment(Module.experimentID);
+								if (Experiment != null)
+								{
+									if (!_experiments.ContainsKey(Experiment))
+										_experiments.Add(Experiment, Module);
+								}
 							}
 						}
 					}
 				}
 			}
-
 
 
 //_logger.Trace( "_experiments contains " + _experiments.Count.ToString( ) + " items" );

@@ -28,6 +28,7 @@ using System;
 using UnityEngine;
 using KSP.IO;
 using KSP.UI.Dialogs;
+using ClickThroughFix;
 
 
 
@@ -181,7 +182,7 @@ namespace ScienceChecklist
 					GUI.skin = _skin;
 
 					windowPos = Utilities.EnsureVisible(windowPos);
-					windowPos = GUILayout.Window( windowId, windowPos, PreDrawWindowContents, windowTitle, GUILayout.ExpandWidth(true),
+					windowPos =ClickThruBlocker.GUILayoutWindow( windowId, windowPos, PreDrawWindowContents, windowTitle, GUILayout.ExpandWidth(true),
 					GUILayout.ExpandHeight(true), GUILayout.MinWidth(wScale(64)), GUILayout.MinHeight(wScale(64)));
 
 
@@ -206,7 +207,7 @@ namespace ScienceChecklist
 						};
 
 						float boxHeight = _tooltipBoxStyle.CalcHeight(new GUIContent(_lastTooltip), wScale(190));
-						GUI.Window(_tooltipWindowId, new Rect(Mouse.screenPos.x + wScale(15), Mouse.screenPos.y + wScale(15), wScale(200), boxHeight + wScale(10)), x =>
+					ClickThruBlocker.GUIWindow(_tooltipWindowId, new Rect(Mouse.screenPos.x + wScale(15), Mouse.screenPos.y + wScale(15), wScale(200), boxHeight + wScale(10)), x =>
 						{
 							GUI.Box(new Rect(wScale(5), wScale(5), wScale(190), boxHeight), _lastTooltip, _tooltipBoxStyle);
 						}, string.Empty, _tooltipStyle );

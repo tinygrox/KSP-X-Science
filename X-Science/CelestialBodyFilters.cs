@@ -28,8 +28,8 @@ namespace ScienceChecklist
 		{
 			try
 			{
-				string assemblyPath = Path.GetDirectoryName( typeof( ScienceChecklistAddon ).Assembly.Location );
-				string filePath = Path.Combine( assemblyPath, "science.cfg" );
+
+		string filePath = "GameData/[x]_Science!/PluginData/science.cfg";
 
 //				_logger.Trace( "Loading settings file:" + filePath );
 				if( File.Exists( filePath ) )

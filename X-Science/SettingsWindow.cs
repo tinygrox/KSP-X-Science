@@ -109,6 +109,7 @@ namespace ScienceChecklist
 				save = true;
 			}
 
+#if falsae
 			if( BlizzysToolbarButton.IsAvailable )
 			{
 				toggle = GUILayout.Toggle( _parent.Config.UseBlizzysToolbar, new GUIContent( "Use blizzy78's toolbar", "Remove [x] Science button from stock toolbar and add to blizzy78 toolbar." ), toggleStyle );
@@ -118,7 +119,7 @@ namespace ScienceChecklist
 					save = true;
 				}
 			}
-
+#endif
 			GUILayout.Space(2);
 			int selected = 0;
 			if( !_parent.Config.RighClickMutesMusic )
