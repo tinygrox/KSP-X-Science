@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[x]_Science! -1.8.1", "X-Science\[x]_Science! -1.8.1.csproj", "{58BBDC8B-AC10-4F7E-A51F-3E3C659B23F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{DDFBE6F2-5DC6-4493-AB08-89F9A33A3219}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDFBE6F2-5DC6-4493-AB08-89F9A33A3219}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDFBE6F2-5DC6-4493-AB08-89F9A33A3219}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58BBDC8B-AC10-4F7E-A51F-3E3C659B23F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58BBDC8B-AC10-4F7E-A51F-3E3C659B23F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58BBDC8B-AC10-4F7E-A51F-3E3C659B23F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58BBDC8B-AC10-4F7E-A51F-3E3C659B23F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

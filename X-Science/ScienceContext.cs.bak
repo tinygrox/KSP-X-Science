@@ -243,6 +243,8 @@ namespace ScienceChecklist
 			{
 				AvailablePart P = PartLoader.LoadedPartsList[x];
 				List<ModuleScienceExperiment> Modules;
+				if (P.name.Length < 9 || P.name.Substring(0, 9) != "kerbalEVA")
+				{
 					// In KSP 1.8.0, this can throw a NullReferenceException.
 					try
 					{
@@ -271,7 +273,8 @@ namespace ScienceChecklist
 								}
 							}
 						}
-					}				
+					}
+				}
 			}
 
 

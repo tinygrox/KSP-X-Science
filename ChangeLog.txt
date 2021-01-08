@@ -17,3 +17,6 @@ ChangeLog
 		ClickThroughBlocker
 		ToolbarController
 		SpaceTuxLibrary
+
+6.0.0.1
+	Fixed missing EVA experiments

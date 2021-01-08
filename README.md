@@ -43,8 +43,7 @@ As long as:
 
 Version Checking
 ---
-
-This mod includes version checking using [MiniAVC][2]. If you opt-in, it will use the internet to check whether there is a new version available. Data is only read from the internet and no personal information is sent. For a more comprehensive version checking experience, please download the [KSP-AVC Plugin][2].
+ For a more comprehensive version checking experience, please download the [KSP-AVC Plugin][2].
 
 [1]:http://creativecommons.org/licenses/by-nc-sa/4.0/
 [2]:http://forum.kerbalspaceprogram.com/threads/79745

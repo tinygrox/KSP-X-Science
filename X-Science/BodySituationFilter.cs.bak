@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 
 namespace ScienceChecklist
@@ -229,6 +230,10 @@ namespace ScienceChecklist
 
 		public bool DifficultScienceFilter( ScienceInstance S )
 		{
+			if (S.ScienceExperiment.id == "evaReport")
+            {
+				Debug.Log("DifficultScienceFilter, evaReport");
+            }
 			// For stars don't show any flying situations.  Block EVA in space near 'cos the Kerbals just explode
 			if ( S.Situation.Body.IsStar )
 			{
