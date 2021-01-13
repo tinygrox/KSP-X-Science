@@ -352,7 +352,7 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 				var experiment = X.Key;
 
 
-				//_logger.Trace( experiment.experimentTitle );
+				_logger.Trace( experiment.experimentTitle );
 				// Where the experiment is possible
 				uint sitMask = experiment.situationMask;
 				uint biomeMask = experiment.biomeMask;

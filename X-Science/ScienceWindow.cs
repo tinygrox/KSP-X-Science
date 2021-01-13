@@ -3,6 +3,9 @@ using UnityEngine;
 using KSP;
 using ClickThroughFix;
 
+using KSP.IO;
+using KSP.UI.Dialogs;
+
 
 namespace ScienceChecklist
 {
@@ -71,6 +74,7 @@ namespace ScienceChecklist
 		private readonly int _window3Id = UnityEngine.Random.Range( 0, int.MaxValue );
 		#endregion
 
+		public bool HideWhenPaused { get; set; }
 
 
 		#region Constructor
@@ -116,6 +120,8 @@ namespace ScienceChecklist
 			_parent.ScienceEventHandler.SituationChanged += ( s, e ) => UpdateSituation( s, e );
 
 			_parent.Config.UiScaleChanged += OnUiScaleChange;
+
+			HideWhenPaused = true;
 		}
 		#endregion
 
@@ -211,19 +217,19 @@ namespace ScienceChecklist
 		/// <summary>
 		/// Draws the window if it is visible.
 		/// </summary>
-		public void Draw( )
+		public void Draw()
 		{
-			if( !IsVisible )
+			if (!IsVisible)
 			{
 				return;
 			}
-			if( !GameHelper.AllowChecklistWindow( ) )
+			if (!GameHelper.AllowChecklistWindow())
 			{
 				IsVisible = false;
-				OnCloseEvent( this, EventArgs.Empty );
+				OnCloseEvent(this, EventArgs.Empty);
 			}
 
-			if( _skin == null )
+			if (_skin == null)
 			{
 				// Initialize our skin and styles.
 				_skin = GameObject.Instantiate(HighLogic.Skin) as GUISkin;
@@ -298,7 +304,7 @@ namespace ScienceChecklist
 					padding = new RectOffset(),
 					fixedHeight = wScale(16)
 				};
-				_closeButtonStyle = new GUIStyle( _skin.button )
+				_closeButtonStyle = new GUIStyle(_skin.button)
 				{
 					// int left, int right, int top, int bottom
 					padding = wScale(new RectOffset(2, 2, 2, 2)),
@@ -319,19 +325,35 @@ namespace ScienceChecklist
 				_skin.window = _windowStyle;
 			}
 
-			var oldSkin = GUI.skin;
-			GUI.skin = _skin;
 
-			if( _compactMode )
+			bool paused = false;
+			if (HideWhenPaused)
 			{
-				_rect3 = ClickThruBlocker.GUILayoutWindow(_window3Id, _rect3, DrawCompactControls, string.Empty, _compactWindowStyle);
+				try
+				{
+					paused = PauseMenu.isOpen || FlightResultsDialog.isDisplaying;
+				}
+				catch (Exception)
+				{
+					// ignore the error and assume the pause menu is not open
+				}
 			}
-			else
+
+			if (!paused)
 			{
-				_rect = ClickThruBlocker.GUILayoutWindow( _windowId, _rect, DrawControls, "[x] Science!");
+				var oldSkin = GUI.skin;
+				GUI.skin = _skin;
+
+				if (_compactMode)
+				{
+					_rect3 = ClickThruBlocker.GUILayoutWindow(_window3Id, _rect3, DrawCompactControls, string.Empty, _compactWindowStyle);
+				}
+				else
+				{
+					_rect = ClickThruBlocker.GUILayoutWindow(_windowId, _rect, DrawControls, "[x] Science!");
+				}
+
 			}
-
-
 
 			if (!string.IsNullOrEmpty(_lastTooltip))
 			{
@@ -358,7 +380,7 @@ namespace ScienceChecklist
 				}, string.Empty, _tooltipStyle );
 			}
 
-			GUI.skin = oldSkin;
+			//GUI.skin = oldSkin;
 		}
 
 

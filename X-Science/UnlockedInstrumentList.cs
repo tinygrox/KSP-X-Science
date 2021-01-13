@@ -65,9 +65,11 @@ float AstroLevel = ScenarioUpgradeableFacilities.GetFacilityLevel( SpaceCenterFa
 
 			bool IsUnlocked = PartLoader.LoadedPartsList.Any
 			(
-				x => ResearchAndDevelopment.PartModelPurchased( x ) &&
+				x => (ResearchAndDevelopment.PartModelPurchased( x ) &&
 				x.partPrefab.Modules != null &&
-				x.partPrefab.Modules.OfType<ModuleScienceExperiment>( ).Any( y => y.experimentID == Id )
+				x.partPrefab.Modules.OfType<ModuleScienceExperiment>( ).Any( y => y.experimentID == Id ))
+			   //|| (z=> z.requiresInventoryPart && ResearchAndDevelopment.PartModelPurchased(z.requiredInventoryPart))
+
 			);
 			_unlockedInstruments.Add( Id, IsUnlocked );
 

@@ -32,8 +32,6 @@ namespace ScienceChecklist
         private Noise _alertNoise; // Needs to be here because of MonoBehaviour's "gameObject"
         private ToolbarControl checklistToolbarControl;
         private ToolbarControl statusToolbarControl;
-        //private UnifiedButton			_checklistButton;
-        //private UnifiedButton			_statusButton;
 
         private ScienceWindow _checklistWindow;
         private StatusWindow _statusWindow;
@@ -418,6 +416,7 @@ namespace ScienceChecklist
                 return;
             //			_logger.Trace( "ChecklistButton_Close" );
             UpdateChecklistVisibility(false);
+            //_active = false;
         }
 
 
@@ -440,18 +439,15 @@ namespace ScienceChecklist
                         _statusWindow.SetVisible(NewVisibility);
                         UpdateStatusVisibility(NewVisibility);
 
+                        _logger.Trace("ChecklistButton_RightClick, _statusWindow.IsVisible(): " + _statusWindow.IsVisible());
                         if (_statusWindow.IsVisible())
                         {
-                            //if( _statusButton != null )
-                            //	_statusButton.SetOn( );
                             if (statusToolbarControl != null)
-                                statusToolbarControl.SetTrue(false);
+                                statusToolbarControl.SetTrue(true);
                             ScienceEventHandler.ScheduleExperimentUpdate(seconds: 0.1f);
                         }
                         else
                         {
-                            //if( _statusButton != null )
-                            //	_statusButton.SetOff( );
                             if (statusToolbarControl != null)
                                 statusToolbarControl.SetFalse(true);
                         }
@@ -467,8 +463,6 @@ namespace ScienceChecklist
         public void OnChecklistWindowClosed(object sender, EventArgs e)
         {
             //			_logger.Trace( "OnChecklistWindowClosed" ); 
-            //if( _checklistButton != null )
-            //	_checklistButton.SetOff( );
             if (checklistToolbarControl != null)
                 checklistToolbarControl.SetFalse(false);
             UpdateChecklistVisibility(false);
@@ -480,11 +474,9 @@ namespace ScienceChecklist
         // It tells us when the window is opened so we can keep the button in sync
         public void OnChecklistWindowOpened(object sender, EventArgs e)
         {
-            //			_logger.Trace( "OnChecklistWindowOpened" );
-            //if( _checklistButton != null )
-            //	_checklistButton.SetOn( );
+            _logger.Trace( "OnChecklistWindowOpened" );
             if (checklistToolbarControl != null)
-                checklistToolbarControl.SetTrue(true);
+                checklistToolbarControl.SetTrue(false);
             UpdateChecklistVisibility(true);
         }
 
@@ -521,9 +513,10 @@ namespace ScienceChecklist
         // Called when the toolbar button for the status window is toggled on.
         private void StatusButton_Open() // object sender, EventArgs e )
         {
+            _logger.Trace("StatusButton_Open 1");
             if (!_active)
                 return;
-            //			_logger.Trace( "StatusButton_Open" );
+            _logger.Trace( "StatusButton_Open 2" );
             UpdateStatusVisibility(true);
         }
 
@@ -532,9 +525,10 @@ namespace ScienceChecklist
         // Called when the toolbar button for the status window is toggled off.
         private void StatusButton_Close() // object sender, EventArgs e )
         {
+            _logger.Trace("StatusButton_Close 1");
             if (!_active)
                 return;
-            //			_logger.Trace( "StatusButton_Close" );
+            _logger.Trace( "StatusButton_Close 2" );
             UpdateStatusVisibility(false);
         }
 
@@ -544,11 +538,9 @@ namespace ScienceChecklist
         // It tells us when the window is closed so we can keep the button in sync
         public void OnStatusWindowClosed(object sender, EventArgs e)
         {
-            //			_logger.Trace( "OnStatusWindowClosed" ); 
-            //if( _statusButton != null )
-            //	_statusButton.SetOff( );
+            _logger.Trace( "OnStatusWindowClosed" ); 
             if (statusToolbarControl != null)
-                statusToolbarControl.SetTrue(false);
+                statusToolbarControl.SetFalse(false);
             UpdateStatusVisibility(false);
         }
 
@@ -558,9 +550,7 @@ namespace ScienceChecklist
         // It tells us when the window is opened so we can keep the button in sync
         public void OnStatusWindowOpened(object sender, EventArgs e)
         {
-            //			_logger.Trace( "OnStatusWindowOpened" );
-            //if( _statusButton != null )
-            //	_statusButton.SetOn( );
+            _logger.Trace( "OnStatusWindowOpened" );
             if (statusToolbarControl != null)
                 statusToolbarControl.SetFalse(false);
             UpdateStatusVisibility(true);
@@ -657,15 +647,20 @@ namespace ScienceChecklist
         }
 
 
-        internal const string MODID = "[x] Science";
+        internal const string MODID = "xScience";
         internal const string MODNAME = "[x] Science!";
 
         internal const string WINDOW_CHECKLIST = "[x] Science Checklist";
 
+        
         void LeftButtonToggle()
         {
-            if (checklistToolbarControl.Enabled)
+            //if (checklistToolbarControl.Enabled)
+            if (!_checklistWindow.IsVisible)
+            {
+               // _active = true;
                 ChecklistButton_Open(null, null);
+            }
             else
                 ChecklistButton_Close(null, null);
         }
@@ -678,12 +673,12 @@ namespace ScienceChecklist
         // Add the buttons
         private void AddButtons()
         {
-            Texture2D StockTexture;
+            //Texture2D StockTexture;
 
-            if (statusToolbarControl == null)
+            if (checklistToolbarControl == null)
             {
-                statusToolbarControl = gameObject.AddComponent<ToolbarControl>();
-                statusToolbarControl.AddToAllToolbars(null, null,
+                checklistToolbarControl = gameObject.AddComponent<ToolbarControl>();
+                checklistToolbarControl.AddToAllToolbars(null, null,
                 ApplicationLauncher.AppScenes.SPACECENTER |
                 ApplicationLauncher.AppScenes.FLIGHT |
                 ApplicationLauncher.AppScenes.MAPVIEW |
@@ -696,7 +691,7 @@ namespace ScienceChecklist
                     "[x]_Science!/PluginData/Icons/icon-small",
                     MODNAME
                 );
-                statusToolbarControl.AddLeftRightClickCallbacks(LeftButtonToggle, RightButton);
+                checklistToolbarControl.AddLeftRightClickCallbacks(LeftButtonToggle, RightButton);
             }
 
             //_checklistButton = new UnifiedButton( gameObject, 1);
@@ -803,20 +798,29 @@ namespace ScienceChecklist
 				_statusButton.ButtonOff += StatusButton_Close;
 				_statusButton.Add( );
 #endif
-                if (checklistToolbarControl == null)
+                if (statusToolbarControl == null)
                 {
-                    checklistToolbarControl = gameObject.AddComponent<ToolbarControl>();
-                    checklistToolbarControl.AddToAllToolbars(StatusButton_Open, StatusButton_Close,
+                    statusToolbarControl = gameObject.AddComponent<ToolbarControl>();
+                    statusToolbarControl.AddToAllToolbars(StatusButton_Open, StatusButton_Close,
                     ApplicationLauncher.AppScenes.FLIGHT |
                     ApplicationLauncher.AppScenes.MAPVIEW,
-                    MODID,
+                    MODID + "2",
                     "xScienceButton2",
                     "[x]_Science!/PluginData/Icons/icon-status",
                     "[x]_Science!/PluginData/Icons/icon-status-small",
-                    MODNAME
+                    WINDOW_CHECKLIST
                     );
                 }
+
             }
+            if (checklistToolbarControl != null)
+            {
+                if (_statusWindow.IsVisible())
+                    checklistToolbarControl.SetTrue(false);
+                else
+                    checklistToolbarControl.SetFalse(false);
+            }
+
         }
 
 
@@ -840,12 +844,24 @@ namespace ScienceChecklist
                 _statusButton = null;
             }
 #endif
+            if (statusToolbarControl != null)
+            {
+                statusToolbarControl.OnDestroy();
+                Destroy(statusToolbarControl);
+                statusToolbarControl = null;
+            }
+            if (checklistToolbarControl != null)
+            {
+                checklistToolbarControl.OnDestroy();
+                Destroy(checklistToolbarControl);
+                checklistToolbarControl = null;
+            }
         }
-#endregion
+        #endregion
 
 
 
-#region METHODS Window helper functions
+        #region METHODS Window helper functions
         // Shows or hides the Checklist Window if the KSP toolbar is visible and the toolbar button is toggled on.
         private void UpdateChecklistVisibility(bool NewVisibility)
         {

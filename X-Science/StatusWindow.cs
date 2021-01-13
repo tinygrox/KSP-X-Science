@@ -239,7 +239,7 @@ namespace ScienceChecklist
 			if( _parent.Config.ShowResultsWindow )
 				Content = new GUIContent( _GfxResultsWindow, "Show results window" );
 			else
-				Content = new GUIContent( _GfxResultsWindowOff, "Supress results window" );
+				Content = new GUIContent( _GfxResultsWindowOff, "Suppress results window" );
 			if( GUILayout.Button( Content, GUILayout.Width( wScale( 36 ) ), GUILayout.Height( wScale( 32 ) ) ) )
 			{
 				_parent.Config.ShowResultsWindow = !_parent.Config.ShowResultsWindow;
