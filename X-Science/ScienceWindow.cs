@@ -121,6 +121,7 @@ namespace ScienceChecklist
 
 			_parent.Config.UiScaleChanged += OnUiScaleChange;
 
+			_logger.Info("new ScienceWindow, Added RefreshFilter");
 			HideWhenPaused = true;
 		}
 		#endregion
@@ -132,8 +133,10 @@ namespace ScienceChecklist
 		// This is the lightest update used when the vessel changes
 		public void RefreshFilter( object sender, EventArgs e )
 		{
-            //			_logger.Trace("RefreshFilter");
-            if (!IsVisible)
+			//			_logger.Trace("RefreshFilter");
+			_logger.Info("ScienceWindow.RefreshFilter");
+
+			if (!IsVisible)
             {
                 return;
             }
@@ -148,14 +151,16 @@ namespace ScienceChecklist
                 return;
             }
 
-            //			_logger.Trace("UpdateSituation");
+			//			_logger.Trace("UpdateSituation");
 
 
-            // Bung new situation into filter and recalculate everything
-            if ( e == null )
+			// Bung new situation into filter and recalculate everything
+			if (e == null)
+			{
 				_filter.CurrentSituation = null;
+			}
 			else
-				_filter.CurrentSituation = new Situation( e._body, e._situation, e._biome, e._subBiome );
+				_filter.CurrentSituation = new Situation(e._body, e._situation, e._biome, e._subBiome);
 		}
 
 

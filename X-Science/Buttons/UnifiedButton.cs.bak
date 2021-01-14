@@ -73,7 +73,7 @@ namespace ScienceChecklist
         public void SetOn()
         {
             //_button.SetOn();
-            toolbarControl.SetTrue(true);
+            toolbarControl.SetTrue(false);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace ScienceChecklist
         public void SetOff()
         {
             //_button.SetOff();
-            toolbarControl.SetFalse(true);
+            toolbarControl.SetFalse(false);
         }
 
         /// <summary>

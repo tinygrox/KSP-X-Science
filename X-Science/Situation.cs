@@ -112,8 +112,8 @@ namespace ScienceChecklist {
 			return Regex.Replace(biome ?? string.Empty, "((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", " $1").Replace("  ", " ").Trim();
 		}
 
-		private readonly Body				  _body;
-		private readonly ExperimentSituations _situation;
+		internal readonly Body				  _body;
+		internal readonly ExperimentSituations _situation;
 		private readonly string               _biome;
 		private readonly string               _subBiome;
 		private readonly string               _formattedBiome;

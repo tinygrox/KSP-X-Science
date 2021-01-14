@@ -47,7 +47,7 @@ namespace ScienceChecklist
         public void Awake()
         {
             _logger = new Logger(this);
-            // _logger.Trace("Awake");
+            _logger.Trace("Awake");
         }
 
 
@@ -55,7 +55,7 @@ namespace ScienceChecklist
         // Called by Unity once to initialize the class, just before Update is called.
         public void Start()
         {
-            // _logger.Trace("Start");
+            _logger.Trace("Start");
 
             if (_addonInitialized == true)
             {
@@ -156,7 +156,7 @@ namespace ScienceChecklist
             DontDestroyOnLoad(this);
 
 
-            // _logger.Trace("Done Start");
+            _logger.Trace("Done Start");
         }
 
 
@@ -301,7 +301,7 @@ namespace ScienceChecklist
         {
             HammerMusicMute(); // Ensure we enforce music volume anyway
 
-            // _logger.Trace("Load");
+            _logger.Trace("Load");
             if (!GameHelper.AllowChecklistWindow())
             {
                 //				_logger.Info( "Ui is hidden in this scene" );
@@ -312,7 +312,7 @@ namespace ScienceChecklist
 
             if (_active)
             {
-                // _logger.Trace("Already loaded.");
+                _logger.Trace("Already loaded.");
                 return;
             }
 
@@ -513,9 +513,10 @@ namespace ScienceChecklist
         // Called when the toolbar button for the status window is toggled on.
         private void StatusButton_Open() // object sender, EventArgs e )
         {
+            _logger.Trace("StatusButton_Open 1");
             if (!_active)
                 return;
-
+            _logger.Trace( "StatusButton_Open 2" );
             UpdateStatusVisibility(true);
         }
 
@@ -524,9 +525,10 @@ namespace ScienceChecklist
         // Called when the toolbar button for the status window is toggled off.
         private void StatusButton_Close() // object sender, EventArgs e )
         {
+            _logger.Trace("StatusButton_Close 1");
             if (!_active)
                 return;
-
+            _logger.Trace( "StatusButton_Close 2" );
             UpdateStatusVisibility(false);
         }
 
@@ -536,7 +538,7 @@ namespace ScienceChecklist
         // It tells us when the window is closed so we can keep the button in sync
         public void OnStatusWindowClosed(object sender, EventArgs e)
         {
-            // _logger.Trace( "OnStatusWindowClosed" ); 
+            _logger.Trace( "OnStatusWindowClosed" ); 
             if (statusToolbarControl != null)
                 statusToolbarControl.SetFalse(true);
             UpdateStatusVisibility(false);
@@ -548,7 +550,7 @@ namespace ScienceChecklist
         // It tells us when the window is opened so we can keep the button in sync
         public void OnStatusWindowOpened(object sender, EventArgs e)
         {
-            // _logger.Trace( "OnStatusWindowOpened" );
+            _logger.Trace( "OnStatusWindowOpened" );
             if (statusToolbarControl != null)
                 statusToolbarControl.SetTrue(true);
             UpdateStatusVisibility(true);
@@ -811,7 +813,7 @@ namespace ScienceChecklist
                 }
 
             }
-            if (statusToolbarControl != null)
+            if (checklistToolbarControl != null)
             {
                 if (_statusWindow.IsVisible())
                     statusToolbarControl.SetTrue(true);

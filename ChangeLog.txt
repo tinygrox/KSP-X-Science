@@ -28,5 +28,9 @@ ChangeLog
 	Fixed typo in "Suppress results window"
 	Updated .version file to only list 1.10.1 as compatible
 
+6.0.0.3
+	Fixed Status window (Here & Now) update if it was opened more than a few seconds after checklist opening
+
+
 Known Issue
 	Status window doesn't update sometimes
