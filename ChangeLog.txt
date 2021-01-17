@@ -31,6 +31,5 @@ ChangeLog
 6.0.0.3
 	Fixed Status window (Here & Now) update if it was opened more than a few seconds after checklist opening
 
+6.0.0.4 (unreleased)
 
-Known Issue
-	Status window doesn't update sometimes
