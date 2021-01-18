@@ -15,8 +15,8 @@ namespace ScienceChecklist
 	{
 //		private readonly Logger _logger;
 		private bool _isInstalled;
-		private Type _tDMModuleScienceAnimate;
-		private Type _tDMModuleScienceAnimateGeneric;
+		static internal Type _tDMModuleScienceAnimate;
+		static internal Type _tDMModuleScienceAnimateGeneric;
 		private Type _tDMBasicScienceModule;
 		private Type _tDMAPI;
 
@@ -163,7 +163,7 @@ namespace ScienceChecklist
 
 			_MIdeployDMExperiment = tDMAPI.GetMethod("deployDMExperiment", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
 			p = _MIdeployDMExperiment.GetParameters();
-			if (!((p.Length == 2) && (p[0].ParameterType == typeof(ModuleScienceExperiment)) && (p[1].ParameterType == typeof(bool)) && _MIdeployDMExperiment.ReturnType == typeof(bool)))
+			if (!((p.Length == 2) && (p[0].ParameterType == typeof(IScienceDataContainer)) && (p[1].ParameterType == typeof(bool)) && _MIdeployDMExperiment.ReturnType == typeof(bool)))
 			{
 				_logger.Info( "DMAPI.deployDMExperiment method signature has changed. [x] Science may not work for DMagic experiments" );
 				_MIdeployDMExperiment = null;
