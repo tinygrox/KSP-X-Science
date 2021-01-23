@@ -34,3 +34,5 @@ ChangeLog
 6.0.0.4 
 	Fixed DMagic experiments
 
+6.0.0.5
+	Fixed missing science (there was a text filter blocking it)
