@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static ScienceChecklist.RegisterToolbar;
 
 namespace ScienceChecklist {
 	/// <summary>
@@ -108,7 +109,13 @@ namespace ScienceChecklist {
             //var sw = System.Diagnostics.Stopwatch.StartNew();
 //			_logger.Trace("UpdateFilter");
 
-            var query = _parent.Science.AllScienceInstances.AsEnumerable( );
+           var query = _parent.Science.AllScienceInstances.AsEnumerable( );
+#if false
+			foreach (ScienceInstance q in query)
+				Log.Info("q: " + q.ScienceSubject + ", " + q.ShortDescription + ", " + q.Situation);
+#endif
+
+
 			switch (_displayMode) {
 				case DisplayMode.All:
 					break;
@@ -142,7 +149,9 @@ namespace ScienceChecklist {
 					return sci_inst.Description.ToLowerInvariant().Contains(s.ToLowerInvariant()) == !negate;
 				}));
 			}
-            var scienceList = query.ToArray();
+            ScienceInstance[] scienceList = query.ToArray();
+
+
             var onboardData = GetCurrentVesselOnboardData();
 
             foreach (var x in scienceList)

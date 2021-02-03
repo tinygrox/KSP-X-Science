@@ -431,6 +431,7 @@ namespace ScienceChecklist
                 _DMModuleScienceAnimateGenerics = v.FindPartModulesImplementing<ModuleScienceExperiment>().Where(x => _parent.DMagic.inheritsFromOrIsDMModuleScienceAnimateGeneric(x)).ToList();
             }
 
+            //_filter.UpdateFilter(_DMModuleScienceAnimates);
 
 
             _filter.UpdateFilter(_DMModuleScienceAnimateGenerics);

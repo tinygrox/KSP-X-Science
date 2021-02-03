@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine; // For Collider
+using static ScienceChecklist.RegisterToolbar;
 
 
 
@@ -344,13 +345,23 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 				return;
 			}
 
-
-
 			// Loop around all experiments
 			foreach( var X in _experiments )
 			{
-				var experiment = X.Key;
+				ScienceExperiment experiment = X.Key;
 
+#if false
+				Log.Info("experiment: " + experiment.experimentTitle + ", "+
+											 "requiredExperimentLevel: " +experiment.requiredExperimentLevel + ", " +
+											 "requireAtmosphere: " + experiment.requireAtmosphere + ", "+
+											 "dataScale: " +experiment.dataScale + ", "+
+											 "requireNoAtmosphere: " + experiment.requireNoAtmosphere + ", "+
+											 "situationMask: " + experiment.situationMask + ", "+
+											 "scienceCap: " + experiment.scienceCap + ", "+
+											 "experimentTitle: " + experiment.experimentTitle + ", "+
+											 "biomeMask: " + experiment.biomeMask + ", "
+						);
+#endif
 
 				_logger.Trace( experiment.experimentTitle );
 				// Where the experiment is possible
@@ -374,7 +385,7 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 					if( sitMaskField != null )
 					{
 						sitMask = (uint)(int)sitMaskField.GetValue( _experiments[ experiment ] );
-//_logger.Trace( "Setting sitMask to " + sitMask + " for " + experiment.experimentTitle );
+						//_logger.Trace( "Setting sitMask to " + sitMask + " for " + experiment.experimentTitle );
 					}
 
 					if( biomeMask == 0 )
@@ -383,14 +394,14 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 						if( biomeMaskField != null )
 						{
 							biomeMask = (uint)(int)biomeMaskField.GetValue( _experiments[ experiment ] );
-//_logger.Trace( "Setting biomeMask to " + biomeMask + " for " + experiment.experimentTitle );
+							//_logger.Trace( "Setting biomeMask to " + biomeMask + " for " + experiment.experimentTitle );
 						}
 					}
 				}
 
 
-
 				List<ExperimentSituations> SituationList = Enum.GetValues( typeof( ExperimentSituations ) ).Cast<ExperimentSituations>( ).ToList<ExperimentSituations>( );
+
 				List<Body> bodies = new List<Body>( _bodyList.Values.ToList( ) );
 
 
@@ -398,7 +409,7 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 				// Check for CelestialBodyFilter
 				if( _experiments[ experiment ] != null )
 				{
-//_logger.Trace( Experiments[ experiment ].experimentID );
+					//_logger.Trace( Experiments[ experiment ].experimentID );
 					if( CelestialBodyFilters.Filters.HasValue( _experiments[ experiment ].experimentID ) )
 					{
 						string FilterText = CelestialBodyFilters.Filters.GetValue( _experiments[ experiment ].experimentID );
