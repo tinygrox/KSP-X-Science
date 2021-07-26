@@ -403,7 +403,7 @@ namespace ScienceChecklist
         // This is the lightest update used when the vessel changes
         public void RefreshFilter(object sender, EventArgs e)
         {
-            //_logger.Info("StatusWindow.RefreshFilter");
+            _logger.Info("StatusWindow.RefreshFilter");
 
             if (!IsVisible())
             {

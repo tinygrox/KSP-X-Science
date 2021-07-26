@@ -39,3 +39,7 @@ ChangeLog
 
 6.0.0.6
 	Fixed DMagic Bathymetry experiment.  Note:  You cannot be on the ocean floor (the experiment WILL work on the ocean floor, just not with X-Science)
+
+6.0.0.7
+	Added AssemblyFileVersion
+	Updated version file for 1.12

@@ -7,7 +7,7 @@ namespace ScienceChecklist
 	sealed class Noise : MonoBehaviour
 	{
 		private static readonly Logger _logger = new Logger( "Noise" );
-		private static readonly string _file = "[x] Science!/bubbles";
+		private static readonly string _file = "[x]_Science!/bubbles";
 
 		private void Awake( )
 		{ }
