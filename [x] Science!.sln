@@ -7,12 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[x]_Science!", "X-Science\[
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C2F1C6C0-A90D-48EC-8271-D55E05326F92}"
 	ProjectSection(SolutionItems) = preProject
-		[x]-Science!.version = [x]-Science!.version
 		buildRelease.bat = buildRelease.bat
 		ChangeLog.txt = ChangeLog.txt
 		deploy.bat = deploy.bat
 		jenkins.txt = jenkins.txt
 		README.md = README.md
+		X-Science.version = X-Science.version
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "[x]_Science! -1.8.1", "X-Science\[x]_Science! -1.8.1.csproj", "{58BBDC8B-AC10-4F7E-A51F-3E3C659B23F5}"
