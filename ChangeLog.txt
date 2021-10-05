@@ -26,7 +26,7 @@ ChangeLog
 	Fixed buttons not showing up on the Blizzy toolbar
 	Added code to hide checklist window when game is paused
 	Fixed typo in "Suppress results window"
-	Updated .version file to only list 1.10.1 as compatible
+	Updated .version file to only list 1.10.1 as compatibleok,th
 
 6.0.0.3
 	Fixed Status window (Here & Now) update if it was opened more than a few seconds after checklist opening
@@ -46,3 +46,8 @@ ChangeLog
 
 6.0.0.8
 	Renamed version file for better web url compatibility
+
+6.0.0.9 
+	Fixed typo  in X-Science/ScienceWindow.cs, "experiements unavialable"
+	Thanks to github user @Goufalite for this:
+		Shows the biomes in the language of the player. E.g. Grasslands => Praires in french

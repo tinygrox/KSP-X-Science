@@ -279,7 +279,7 @@ namespace ScienceChecklist
 				_textFieldStyle = new GUIStyle(_skin.textField)
 				{
 					fontSize = wScale(16),
-					alignment = TextAnchor.MiddleLeft,
+					alignment = TextAnchor.MiddleLeft,					
 				};
 				_horizontalScrollbarOnboardStyle = new GUIStyle(_skin.horizontalScrollbar)
 				{
@@ -478,7 +478,7 @@ namespace ScienceChecklist
 			GUIContent[ ] FilterButtons = {
 					new GUIContent(_currentSituationTexture, "Show experiments available right now"),
 					new GUIContent(_currentVesselTexture, "Show experiments available on this vessel"),
-					new GUIContent(_notCurrentVesselTexture, "Show unlocked experiements unavialable on this vessel"),
+					new GUIContent(_notCurrentVesselTexture, "Show unlocked experiments unavailable on this vessel"),
 					new GUIContent(_unlockedTexture, "Show all unlocked experiments"),
 				};
 			if( _parent.Config.AllFilter )
