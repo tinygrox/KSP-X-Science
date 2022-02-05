@@ -19,6 +19,11 @@ Tired of wondering whether you need to go back to Minmus to get an EVA report wh
 Installation
 ------------
 
+Install Dependencies:
+* [Click Through Blocker](https://forum.kerbalspaceprogram.com/index.php?/topic/170747-141-click-through-blocker/)
+* [ToolbarController](https://forum.kerbalspaceprogram.com/index.php?/topic/169509-112x-toolbar-controller-for-modders/)
+* [Space Tux Library](https://spacedock.info/mod/2210/SpaceTux%20Library)
+
 Simply copy the GameData folder into your KSP directory.
 
 License
@@ -46,4 +51,4 @@ Version Checking
  For a more comprehensive version checking experience, please download the [KSP-AVC Plugin][2].
 
 [1]:http://creativecommons.org/licenses/by-nc-sa/4.0/
-[2]:http://forum.kerbalspaceprogram.com/threads/79745
+[2]:https://forum.kerbalspaceprogram.com/index.php?/topic/173126-180-ksp-avc-add-on-version-checker-plugin-miniavc-v2-now-available/
