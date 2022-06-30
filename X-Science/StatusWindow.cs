@@ -168,8 +168,9 @@ namespace ScienceChecklist
 
             GUILayout.Label("Min Science", _scienceThresholdLabelStyle);
 
+            float minSci = _parent.Config.VeryLowMinScience ? 0.001f : .1f;
             float prev_scienceThreshold = _parent.Config.ScienceThreshold;
-            float scienceThreshold = Adds.AcceleratedSlider(_parent.Config.ScienceThreshold, 0.1f, 50f, 1.8f, new[] {
+            float scienceThreshold = Adds.AcceleratedSlider(_parent.Config.ScienceThreshold, minSci, 50f, 1.8f, new[] {
                 new Adds.StepRule(0.5f, 10f),
                 new Adds.StepRule(1f, 40f),
                 new Adds.StepRule(2f, 50f),
@@ -181,7 +182,19 @@ namespace ScienceChecklist
                 _parent.Config.Save();
             }
 
-            GUILayout.Label(_parent.Config.ScienceThreshold.ToString("F1"), _scienceThresholdLabelStyle, GUILayout.Width(wScale(26)));
+            string format;
+            int width;
+            if (_parent.Config.VeryLowMinScience && (scienceThreshold < 1f))
+            {
+                format = "F3";
+                width = 40;
+            }
+            else
+            {
+                format = "F1";
+                width = 26;
+            }
+            GUILayout.Label(_parent.Config.ScienceThreshold.ToString(format), _scienceThresholdLabelStyle, GUILayout.Width(wScale(width)));
 
             GUILayout.EndHorizontal();
 

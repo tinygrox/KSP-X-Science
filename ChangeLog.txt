@@ -51,3 +51,9 @@ ChangeLog
 	Fixed typo  in X-Science/ScienceWindow.cs, "experiements unavialable"
 	Thanks to github user @Goufalite for this:
 		Shows the biomes in the language of the player. E.g. Grasslands => Praires in french
+
+6.0.0.10
+	Thanks to Github user @Samharris2020 for this:
+		Updated KSP-AVC Plugin as to not link to a deleted thread page http://forum.kerbalspaceprogram.com/threads/79745
+		Linked dependencies in installation instructions.
+	Added new option to change the minimum science slider to 0.001 instead of 0.1

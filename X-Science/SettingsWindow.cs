@@ -81,12 +81,21 @@ namespace ScienceChecklist
 				save = true;
 			}
 
-			toggle = GUILayout.Toggle( _parent.Config.CheckDebris, new GUIContent( "Check debris", "Vessels marked as debris will be checked for recoverable science." ), toggleStyle );
-			if( toggle != _parent.Config.CheckDebris )
+			toggle = GUILayout.Toggle(_parent.Config.CheckDebris, new GUIContent("Check debris", "Vessels marked as debris will be checked for recoverable science."), toggleStyle);
+			if (toggle != _parent.Config.CheckDebris)
 			{
 				_parent.Config.CheckDebris = toggle;
 				save = true;
 			}
+
+			toggle = GUILayout.Toggle(_parent.Config.VeryLowMinScience, new GUIContent("Low Min Science", "Minimum science slider in the Here & Now window will go to 0.001"), toggleStyle);
+			if (toggle != _parent.Config.VeryLowMinScience)
+			{
+				_parent.Config.VeryLowMinScience = toggle;
+				save = true;
+			}
+
+			
 
 			toggle = GUILayout.Toggle( _parent.Config.AllFilter, new GUIContent( "Allow all filter", "Adds a filter button showing all experiments, even on unexplored bodies using unavailable instruments.\nMight be considered cheating." ), toggleStyle );
 			if( toggle != _parent.Config.AllFilter )
