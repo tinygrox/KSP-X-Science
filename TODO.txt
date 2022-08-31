@@ -1,0 +1,60 @@
+From:  https://forum.kerbalspaceprogram.com/index.php?/topic/199287-112-moar-x-science-ksp-science-report-and-checklist/&do=findComment&comment=4152080
+
+1.- The "Min Science Slider" goes from 0.001 straight to 0.500 now. As the main reason for this improvements is to match the precision used at the Archives in the R&D building, it would be great if it could be set to 0.005 as well... I saw the following lines (173 and following) in the file StatusWindow.cs:
+
+            float scienceThreshold = Adds.AcceleratedSlider(_parent.Config.ScienceThreshold, minSci, 50f, 1.8f, new[] {
+                new Adds.StepRule(0.5f, 10f),
+                new Adds.StepRule(1f, 40f),
+                new Adds.StepRule(2f, 50f),
+            });
+if I understand correctly, maybe the following lines could be added after the opening brace:
+
+                new Adds.StepRule(0.001f, 0.01f),
+                new Adds.StepRule(0.01f, 0.1f),
+2.- Regarding the inaccurate amount reported in the "Hear and Now" window (see this quote from my previous post):
+
+  On 7/4/2022 at 5:08 PM, alartor said:
+- in the Vessel Recovery dialog window, the amount of Sci points for each run of the experiment was different from what MOAR[x]Science! had been displaying in the "Here and Now" window:
+
+Run #	Recovery window Sci points (correct)	Here and Now window Sci points (not accurate)
+1	30	30
+2	9.5	9.5
+3	3	2.4
+4	1	0.6
+5	0.3	0.1
+6	0.1	0.0
+(total: 43.95 out of 44 Sci points).
+
+I think I found where the incorrect calculations are being made: file ExperimentFilter.cs (line 221): it simply divides the value by 4 to the power of the number of instances of the experiment on board, while it should use (1-b/t) instead of 4:
+
+experimentValue /= Mathf.Pow(4f, subjectOnboardData.Length - 1);
+should be
+
+experimentValue /= Mathf.Pow( (1-(.baseValue/.scienceCap))f , subjectOnboardData.Length - 1);
+(sorry if that's kind of pseudo-code, not sure of the exact way to retrieve that value). Interestingly enough, a similar calculation is made correctly somewhere else: file ScienceInstance.cs (line 124 and following):
+
+			var multiplier = ScienceExperiment.baseValue / ScienceExperiment.scienceCap;
+
+
+
+			OnboardScience = 0;
+			if( Sci.OnboardScienceList.ContainsKey( ScienceSubject.id ) )
+			{
+				var data = Sci.OnboardScienceList[ ScienceSubject.id ];
+//				var _logger = new Logger( "Experiment" );
+//				_logger.Trace( ScienceSubject.id + " found " + data.Count( ) + " items" );
+
+				for( int x = 0; x < data.Count; x++ )
+				{
+					var next = (TotalScience - (CompletedScience + OnboardScience)) * multiplier;
+					OnboardScience += next;
+				}
+			}
+where calculating again "next" would give the correct value for "experimentValue" variable above. Also of note is that around this last lines of code, the 0.1 value for min science is again hard-coded...
+
+3.- Finally, I'm wondering if line 408 in StatusWindow.cs could be changed so that in the main window a two decimal digits precision be shown, from:
+
+                GUI.Label(labelRect, string.Format("{0:0.#}  /  {1:0.#}", curr, total), _progressLabelStyle);
+to 
+
+                GUI.Label(labelRect, string.Format("{0:0.##}  /  {1:0.##}", curr, total), _progressLabelStyle);

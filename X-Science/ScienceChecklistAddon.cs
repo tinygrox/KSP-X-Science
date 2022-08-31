@@ -20,7 +20,7 @@ namespace ScienceChecklist
         public xScienceEventHandler ScienceEventHandler;
         public ScienceContext Science { get; private set; }
         public DMagicFactory DMagic { get; private set; }
-        public Config Config { get; private set; }
+        public static Config Config { get; private set; }
 
         private bool _active;           // Are we actually running?
         private bool _launcherVisible;  // If the toolbar is shown
@@ -177,6 +177,7 @@ namespace ScienceChecklist
 
             // Music Mute - Unhook from the scene switch events
             GameEvents.onGameSceneSwitchRequested.Remove(this.onGameSceneSwitchRequested);
+
             GameEvents.onLevelWasLoaded.Remove(this.onLevelWasLoaded);
             RemoveButtons();
         }
@@ -825,23 +826,6 @@ namespace ScienceChecklist
 
         private void RemoveButtons()
         {
-#if false
-            if (_checklistButton != null)
-            {
-                _checklistButton.ButtonOn -= ChecklistButton_Open;
-                _checklistButton.ButtonOff -= ChecklistButton_Close;
-                _checklistButton.RightClick -= ChecklistButton_RightClick;
-                _checklistButton.Remove();
-                _checklistButton = null;
-            }
-            if (_statusButton != null)
-            {
-                _statusButton.ButtonOn -= StatusButton_Open;
-                _statusButton.ButtonOff -= StatusButton_Close;
-                _statusButton.Remove();
-                _statusButton = null;
-            }
-#endif
             if (statusToolbarControl != null)
             {
                 statusToolbarControl.OnDestroy();

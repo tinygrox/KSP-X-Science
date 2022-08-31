@@ -134,7 +134,7 @@ namespace ScienceChecklist
 				List <ScienceData> D = new List <ScienceData>( );
 				foreach( var v in LoadedVessels )
 				{
-					if( _parent.Config.CheckDebris || v.vesselType != VesselType.Debris )
+					if( ScienceChecklistAddon.Config.CheckDebris || v.vesselType != VesselType.Debris )
 					{
 						 D = v.FindPartModulesImplementing<IScienceDataContainer>( )
 							.SelectMany( y => y.GetData( ) ?? new ScienceData[ 0 ] ).ToList( );
@@ -160,7 +160,7 @@ namespace ScienceChecklist
 			// Only happend on a brand-new game, not a load.
 			// This seemed to fix it
 				if( HighLogic.CurrentGame != null && HighLogic.CurrentGame.flightState != null &&
-					_parent.Config.CheckUnloadedVessels)
+					ScienceChecklistAddon.Config.CheckUnloadedVessels)
 				{
 					// Dump all the vessels to a save.
 					var node = new ConfigNode( );
@@ -173,7 +173,7 @@ namespace ScienceChecklist
 						ConfigNode[] vessels = node.GetNodes( "VESSEL" );
 						onboardScience.AddRange
 						(
-							vessels.Where( x => _parent.Config.CheckDebris || x.GetValue( "type" ) != "Debris" )
+							vessels.Where( x => ScienceChecklistAddon.Config.CheckDebris || x.GetValue( "type" ) != "Debris" )
 								.Where( x => !vesselIds.Contains( x.GetValue( "pid" ) ) ) // Not the active ones, we have them already
 									.SelectMany( x => x.GetNodes( "PART" )
 										.SelectMany( y => y.GetNodes( "MODULE" )
@@ -444,7 +444,7 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 							{
 								ScienceInstance S = new ScienceInstance( experiment, new Situation( bodies[ body_index ], SituationList[ situation_index ], bodies[ body_index ].Biomes[ biome_index ] ), this );
 								if( BodyFilter.TextFilter( S ) )
-									if( !_parent.Config.FilterDifficultScience || BodyFilter.DifficultScienceFilter( S ) )
+									if( !ScienceChecklistAddon.Config.FilterDifficultScience || BodyFilter.DifficultScienceFilter( S ) )
 										_allScienceInstances.Add( S );
 							}
 						}
@@ -452,7 +452,7 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 						{
 							ScienceInstance S = new ScienceInstance( experiment, new Situation( bodies[ body_index ], SituationList[ situation_index ] ), this );
 							if( BodyFilter.TextFilter( S ) )
-								if( !_parent.Config.FilterDifficultScience || BodyFilter.DifficultScienceFilter( S ) )
+								if( !ScienceChecklistAddon.Config.FilterDifficultScience || BodyFilter.DifficultScienceFilter( S ) )
 									_allScienceInstances.Add( S );
 						}
 					}
@@ -474,7 +474,7 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 								{
 									ScienceInstance S = new ScienceInstance( experiment, new Situation( _bodyList[ _homeWorld ], ExperimentSituations.SrfLanded, _kscBiome, _kscBiomes[ x ] ), this );
 									if( BodyFilter.TextFilter( S ) )
-										if( !_parent.Config.FilterDifficultScience || BodyFilter.DifficultScienceFilter( S ) )
+										if( !ScienceChecklistAddon.Config.FilterDifficultScience || BodyFilter.DifficultScienceFilter( S ) )
 											_allScienceInstances.Add( S );
 								}
 							}

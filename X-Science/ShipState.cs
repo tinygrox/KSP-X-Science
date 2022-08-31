@@ -26,9 +26,9 @@ namespace ScienceChecklist
             : base("[x] Science! Selected Object", 250, 30)
         {
             _parent = Parent;
-            UiScale = _parent.Config.UiScale;
+            UiScale = ScienceChecklistAddon.Config.UiScale;
             scrollPosition = Vector2.zero;
-            _parent.Config.UiScaleChanged += OnUiScaleChange;
+            ScienceChecklistAddon.Config.UiScaleChanged += OnUiScaleChange;
             _logger = new Logger(this);
             SelectedObject = null;
 
@@ -64,7 +64,7 @@ namespace ScienceChecklist
 
         private void OnUiScaleChange(object sender, EventArgs e)
         {
-            UiScale = _parent.Config.UiScale;
+            UiScale = ScienceChecklistAddon.Config.UiScale;
             labelStyle = null;
             sectionStyle = null;
             base.OnUiScaleChange();
@@ -246,7 +246,7 @@ namespace ScienceChecklist
             //_logger.Trace( "MapObjectSelected" );
             //_logger.Trace( SelectionData._selectedObject.type.ToString( ) );
 
-            if (!_parent.Config.SelectedObjectWindow)
+            if (!ScienceChecklistAddon.Config.SelectedObjectWindow)
                 return;
 
             switch (SelectionData._selectedObject.type)

@@ -119,7 +119,7 @@ namespace ScienceChecklist {
 
 			CompletedScience = ScienceSubject.science * HighLogic.CurrentGame.Parameters.Career.ScienceGainMultiplier;
 			TotalScience = ScienceSubject.scienceCap * HighLogic.CurrentGame.Parameters.Career.ScienceGainMultiplier;
-			IsComplete = CompletedScience > TotalScience || TotalScience - CompletedScience < 0.1;
+			IsComplete = CompletedScience > TotalScience || TotalScience - CompletedScience < ScienceChecklistAddon.Config.ScienceThreshold;
 
 			var multiplier = ScienceExperiment.baseValue / ScienceExperiment.scienceCap;
 
@@ -139,7 +139,7 @@ namespace ScienceChecklist {
 				}
 			}
 			var AllCollectedScience = CompletedScience + OnboardScience;
-			IsCollected = AllCollectedScience > TotalScience || TotalScience - AllCollectedScience < 0.1;
+			IsCollected = AllCollectedScience > TotalScience || TotalScience - AllCollectedScience < ScienceChecklistAddon.Config.ScienceThreshold;
 		}
 		#endregion
 	}

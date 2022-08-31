@@ -171,8 +171,8 @@ namespace ScienceChecklist {
 			}
 			else
 			{
-				CompleteWithoutRecovery = _parent.Config.CompleteWithoutRecovery;
-				HideCompleteExperiments = _parent.Config.HideCompleteExperiments;
+				CompleteWithoutRecovery = ScienceChecklistAddon.Config.CompleteWithoutRecovery;
+				HideCompleteExperiments = ScienceChecklistAddon.Config.HideCompleteExperiments;
 			}
 
 
@@ -261,7 +261,7 @@ namespace ScienceChecklist {
 
 			var completedScience = x.ScienceSubject.science * HighLogic.CurrentGame.Parameters.Career.ScienceGainMultiplier;
 			var totalScience = x.ScienceSubject.scienceCap * HighLogic.CurrentGame.Parameters.Career.ScienceGainMultiplier * f;
-			var isComplete = completedScience > totalScience || totalScience - completedScience < 0.1;
+			var isComplete = completedScience > totalScience || totalScience - completedScience < ScienceChecklistAddon.Config.ScienceThreshold;
 
 			return isComplete;
 		}

@@ -15,12 +15,12 @@ namespace ScienceChecklist
 
 
 		public HelpWindow( ScienceChecklistAddon Parent )
-			: base("[x] Science! Help", 500, Screen.height * 0.75f  / Parent.Config.UiScale )
+			: base("[x] Science! Help", 500, Screen.height * 0.75f  / ScienceChecklistAddon.Config.UiScale )
 		{
 			_parent = Parent;
-			UiScale = _parent.Config.UiScale;
+			UiScale = ScienceChecklistAddon.Config.UiScale;
 			scrollPosition = Vector2.zero;
-			_parent.Config.UiScaleChanged += OnUiScaleChange;
+			ScienceChecklistAddon.Config.UiScaleChanged += OnUiScaleChange;
 		}
 
 
@@ -52,7 +52,7 @@ namespace ScienceChecklist
 
 		private void OnUiScaleChange( object sender, EventArgs e )
 		{
-			UiScale = _parent.Config.UiScale;
+			UiScale = ScienceChecklistAddon.Config.UiScale;
 			labelStyle = null;
 			sectionStyle = null;
 			base.OnUiScaleChange( );

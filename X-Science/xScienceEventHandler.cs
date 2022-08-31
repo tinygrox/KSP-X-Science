@@ -76,8 +76,8 @@ namespace ScienceChecklist
 
 			GameEvents.onPlanetariumTargetChanged.Add( new EventData<MapObject>.OnEvent( this.ActiveShipChanged ) );
 
-			_parent.Config.CheckDebrisChanged += ( s, e ) => CheckDebrisSettingChanged( );
-			_parent.Config.FilterDifficultScienceChanged += ( s, e ) => FilterDifficultScienceChanged( );
+			ScienceChecklistAddon.Config.CheckDebrisChanged += ( s, e ) => CheckDebrisSettingChanged( );
+			ScienceChecklistAddon.Config.FilterDifficultScienceChanged += ( s, e ) => FilterDifficultScienceChanged( );
 		}
 
 

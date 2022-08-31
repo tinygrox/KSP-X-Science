@@ -57,3 +57,7 @@ ChangeLog
 		Updated KSP-AVC Plugin as to not link to a deleted thread page http://forum.kerbalspaceprogram.com/threads/79745
 		Linked dependencies in installation instructions.
 	Added new option to change the minimum science slider to 0.001 instead of 0.1
+
+6.0.1
+	Fixed all areas where 0.1 was hardcoded in place for the minimum  science
+	Added option to totally hide the Min Science Slider on the Here & Now window

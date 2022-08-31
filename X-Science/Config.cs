@@ -18,6 +18,7 @@ namespace ScienceChecklist
         private bool _useBlizzysToolbar;
         private bool _completeWithoutRecovery;
         private bool _checkDebris;
+        private bool _hideMinSciSlider;
         private bool _lowMinScience;
         private bool _allFilter;
         private bool _stopTimeWarp;
@@ -38,6 +39,7 @@ namespace ScienceChecklist
         public bool UseBlizzysToolbar { get { return _useBlizzysToolbar; } set { if (_useBlizzysToolbar != value) { _useBlizzysToolbar = value; OnUseBlizzysToolbarChanged(); } } }
         public bool CompleteWithoutRecovery { get { return _completeWithoutRecovery; } set { if (_completeWithoutRecovery != value) { _completeWithoutRecovery = value; OnCompleteWithoutRecoveryChanged(); } } }
         public bool CheckDebris { get { return _checkDebris; } set { if (_checkDebris != value) { _checkDebris = value; OnCheckDebrisChanged(); } } }
+        public bool HideMinScienceSlider{ get { return _hideMinSciSlider; } set { if (_hideMinSciSlider != value) { _hideMinSciSlider = value; } } }
         public bool VeryLowMinScience { get { return _lowMinScience; } set { if (_lowMinScience != value) { _lowMinScience = value; } } }
         public bool AllFilter { get { return _allFilter; } set { if (_allFilter != value) { _allFilter = value; OnAllFilterChanged(); } } }
         public float ScienceThreshold { get { return _scienceThreshold; } set { if (_scienceThreshold != value) { _scienceThreshold = value; } } }
@@ -279,6 +281,7 @@ namespace ScienceChecklist
             settings.AddValue("UseBlizzysToolbar", _useBlizzysToolbar);
             settings.AddValue("CompleteWithoutRecovery", _completeWithoutRecovery);
             settings.AddValue("CheckDebris", _checkDebris);
+            settings.AddValue("HideMinScienceSlider", _hideMinSciSlider);
             settings.AddValue("LowMinScience", _lowMinScience);
             settings.AddValue("AllFilter", _allFilter);
             settings.AddValue("ScienceThreshold", _scienceThreshold);
@@ -321,6 +324,7 @@ namespace ScienceChecklist
             _useBlizzysToolbar = false;
             _completeWithoutRecovery = false;
             _checkDebris = false;
+            _hideMinSciSlider = false;
             _lowMinScience = false;
             _allFilter = true;
             _scienceThreshold = 0.1f;
@@ -364,6 +368,10 @@ namespace ScienceChecklist
                     V = settings.GetValue("CheckDebris");
                     if (V != null)
                         _checkDebris = bool.Parse(V);
+
+                    V = settings.GetValue("HideMinScienceSlider");
+                    if (V != null)
+                        _hideMinSciSlider = bool.Parse(V);
 
                     V = settings.GetValue("LowMinScience");
                     if (V != null)

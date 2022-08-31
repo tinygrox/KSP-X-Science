@@ -113,13 +113,13 @@ namespace ScienceChecklist
 			_emptyTexture.SetPixels(new[] { Color.clear });
 			_emptyTexture.Apply();
 
-			_parent.Config.HideCompleteEventsChanged += ( s, e ) => RefreshFilter( s, e );
-			_parent.Config.CompleteWithoutRecoveryChanged += ( s, e ) => RefreshFilter( s, e );
+			ScienceChecklistAddon.Config.HideCompleteEventsChanged += ( s, e ) => RefreshFilter( s, e );
+			ScienceChecklistAddon.Config.CompleteWithoutRecoveryChanged += ( s, e ) => RefreshFilter( s, e );
 
 			_parent.ScienceEventHandler.FilterUpdateEvent += ( s, e ) => RefreshFilter( s, e );
 			_parent.ScienceEventHandler.SituationChanged += ( s, e ) => UpdateSituation( s, e );
 
-			_parent.Config.UiScaleChanged += OnUiScaleChange;
+			ScienceChecklistAddon.Config.UiScaleChanged += OnUiScaleChange;
 
 			_logger.Info("new ScienceWindow, Added RefreshFilter");
 			HideWhenPaused = true;
@@ -320,7 +320,7 @@ namespace ScienceChecklist
 				};
 				_windowStyle = new GUIStyle(_skin.window)
 				{
-					fontSize = (int)(_skin.window.fontSize * _parent.Config.UiScale),
+					fontSize = (int)(_skin.window.fontSize * ScienceChecklistAddon.Config.UiScale),
 					padding = wScale(_skin.window.padding),
 					margin = wScale(_skin.window.margin),
 					border = wScale(_skin.window.border),
@@ -481,7 +481,7 @@ namespace ScienceChecklist
 					new GUIContent(_notCurrentVesselTexture, "Show unlocked experiments unavailable on this vessel"),
 					new GUIContent(_unlockedTexture, "Show all unlocked experiments"),
 				};
-			if( _parent.Config.AllFilter )
+			if( ScienceChecklistAddon.Config.AllFilter )
 			{
 				Array.Resize( ref FilterButtons, 5 );
 				FilterButtons[ 4 ] = new GUIContent(_allTexture, "Show all experiments");
@@ -678,7 +678,7 @@ namespace ScienceChecklist
 		{
 			var completeTexture = compact ? _completeTextureCompact : _completeTexture;
 			var progressTexture = compact ? _progressTextureCompact : _progressTexture;
-			var complete = curr > total || (total - curr < 0.1);
+			var complete = curr > total || (total - curr < ScienceChecklistAddon.Config.ScienceThreshold);
 			if (complete)
 			{
 				curr = total;
@@ -691,12 +691,12 @@ namespace ScienceChecklist
 			if (curr2 != 0 && !complete)
 			{
 				var complete2 = false;
-				if (curr2 > total || (total - curr2 < 0.1))
+				if (curr2 > total || (total - curr2 < ScienceChecklistAddon.Config.ScienceThreshold))
 				{
 					curr2 = total;
 					complete2 = true;
 				}
-				_skin.horizontalScrollbarThumb.normal.background = curr2 < 0.1
+				_skin.horizontalScrollbarThumb.normal.background = curr2 < ScienceChecklistAddon.Config.ScienceThreshold
 					? _emptyTexture
 					: complete2
 						? completeTexture
@@ -705,7 +705,7 @@ namespace ScienceChecklist
 				GUI.HorizontalScrollbar(progressRect, 0, curr2 / total, 0, 1, _horizontalScrollbarOnboardStyle);
 			}
 
-			_skin.horizontalScrollbarThumb.normal.background = curr < 0.1
+			_skin.horizontalScrollbarThumb.normal.background = curr < ScienceChecklistAddon.Config.ScienceThreshold
 				? _emptyTexture
 				: complete ? completeTexture : progressTexture;
 
@@ -733,8 +733,8 @@ namespace ScienceChecklist
 			_rect3.height = wScale(_defaultSize3.y);
 		}
 
-		private int wScale( int v ) { return Convert.ToInt32( Math.Round( v * _parent.Config.UiScale ) ); }
-		private float wScale( float v ) { return v * _parent.Config.UiScale; }
+		private int wScale( int v ) { return Convert.ToInt32( Math.Round( v * ScienceChecklistAddon.Config.UiScale ) ); }
+		private float wScale( float v ) { return v * ScienceChecklistAddon.Config.UiScale; }
 		private Rect wScale( Rect v )
 		{
 			return new Rect( wScale( v.x ), wScale( v.y ), wScale( v.width ), wScale( v.height ) );

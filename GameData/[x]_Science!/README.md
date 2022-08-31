@@ -1,11 +1,11 @@
 Z-Key Aerospace has rebuilt this KSP Mod for KSP V1.0 onwards
-[X] Science! was by Bodrick and is released under "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license"
+[X] Science! was by Brodrick and is released under "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license"
 
 As of V4.1 it is rebuilt and fixed by Z-Key Aerospace.
 
 
 
-Bodrick's readme follows...
+Brodrick's readme follows...
 
 
 
@@ -18,6 +18,11 @@ Tired of wondering whether you need to go back to Minmus to get an EVA report wh
 
 Installation
 ------------
+
+Install Dependencies:
+* [Click Through Blocker](https://forum.kerbalspaceprogram.com/index.php?/topic/170747-141-click-through-blocker/)
+* [ToolbarController](https://forum.kerbalspaceprogram.com/index.php?/topic/169509-112x-toolbar-controller-for-modders/)
+* [Space Tux Library](https://spacedock.info/mod/2210/SpaceTux%20Library)
 
 Simply copy the GameData folder into your KSP directory.
 
@@ -43,8 +48,7 @@ As long as:
 
 Version Checking
 ---
-
-This mod includes version checking using [MiniAVC][2]. If you opt-in, it will use the internet to check whether there is a new version available. Data is only read from the internet and no personal information is sent. For a more comprehensive version checking experience, please download the [KSP-AVC Plugin][2].
+ For a more comprehensive version checking experience, please download the [KSP-AVC Plugin][2].
 
 [1]:http://creativecommons.org/licenses/by-nc-sa/4.0/
-[2]:http://forum.kerbalspaceprogram.com/threads/79745
+[2]:https://forum.kerbalspaceprogram.com/index.php?/topic/173126-180-ksp-avc-add-on-version-checker-plugin-miniavc-v2-now-available/
