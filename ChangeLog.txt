@@ -70,3 +70,4 @@ ChangeLog
 		Fixed 'Here and Now' window not resizing correctly when hiding MinScience slider.
 		Fixed position of experiment buttons in 'Here and Now' window when MinScience slider hidden.
 		Fixed experiments not being re-classified as incomplete (or completed) when switching between regular and VeryLowMinScience if MinScience slider hidden.
+		Fixed text spanning outside of buttons and/or progress bars in some cases.

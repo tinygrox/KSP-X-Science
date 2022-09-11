@@ -88,7 +88,7 @@ namespace ScienceChecklist
             {
                 fontStyle = FontStyle.BoldAndItalic,
                 alignment = TextAnchor.MiddleCenter,
-                fontSize = wScale(11),
+                fontSize = wScale(9),
                 normal = {
                     textColor = new Color(0.322f, 0.298f, 0.004f)
                 }
@@ -119,11 +119,11 @@ namespace ScienceChecklist
             };
             _experimentButtonStyle = new GUIStyle(_skin.button)
             {
-                fontSize = wScale(14)
+                fontSize = wScale(12)
             };
             _experimentLabelStyle = new GUIStyle(_experimentButtonStyle)
             {
-                fontSize = wScale(14),
+                fontSize = wScale(12),
                 normal = { textColor = Color.black }
             };
         }
