@@ -52,6 +52,11 @@ experimentValue /= Mathf.Pow( (1-(.baseValue/.scienceCap))f , subjectOnboardData
 			}
 where calculating again "next" would give the correct value for "experimentValue" variable above. Also of note is that around this last lines of code, the 0.1 value for min science is again hard-coded...
 
+====>	[alartor]: FIXED
+====>	Fixed the expermientValue formula so that the values are calculated correctly.
+
+
+
 3.- Finally, I'm wondering if line 408 in StatusWindow.cs could be changed so that in the main window a two decimal digits precision be shown, from:
 
                 GUI.Label(labelRect, string.Format("{0:0.#}  /  {1:0.#}", curr, total), _progressLabelStyle);

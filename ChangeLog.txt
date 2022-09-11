@@ -61,3 +61,7 @@ ChangeLog
 6.0.1
 	Fixed all areas where 0.1 was hardcoded in place for the minimum  science
 	Added option to totally hide the Min Science Slider on the Here & Now window
+
+6.0.1.1
+	Fixes / evolutions by Github user @alartor
+		Fixed value of next run of experiment being calculated incorrectly when runs of experiment already done but not yet recovered at KSC.
