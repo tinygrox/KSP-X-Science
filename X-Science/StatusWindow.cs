@@ -170,31 +170,54 @@ namespace ScienceChecklist
                 {
                     GUILayout.Label("Min Science", _scienceThresholdLabelStyle);
 
-                    float minSci = ScienceChecklistAddon.Config.VeryLowMinScience ? 0.001f : .1f;
-                    float prev_scienceThreshold = Math.Max(ScienceChecklistAddon.Config.ScienceThreshold, minSci);
-                    float scienceThreshold = Adds.AcceleratedSlider(prev_scienceThreshold, minSci, 50f, 1.8f, new[] {
+                    float scienceThreshold = 0f;
+                    if (ScienceChecklistAddon.Config.VeryLowMinScience)
+                    {
+                        float minSci = 0.0001f;
+                        float maxSci = 0.1f;
+                        float prev_scienceThreshold = Math.Min(Math.Max(ScienceChecklistAddon.Config.ScienceThreshold, minSci), maxSci);
+                        scienceThreshold = Adds.AcceleratedSlider(prev_scienceThreshold, minSci, maxSci, 2.7f, new[]
+                        {
+                            new Adds.StepRule(0.0001f, 0.005f),
+                            new Adds.StepRule(0.001f, 0.01f),
+                            new Adds.StepRule(0.01f, 0.1f),
+                        });
+                    }
+                    else
+                    {
+                        float minSci = 0.1f;
+                        float maxSci = 50f;
+                        float prev_scienceThreshold = Math.Min(Math.Max(ScienceChecklistAddon.Config.ScienceThreshold, minSci), maxSci);
+                        scienceThreshold = Adds.AcceleratedSlider(prev_scienceThreshold, minSci, maxSci, 1.8f, new[]
+                        {
                             new Adds.StepRule(0.5f, 10f),
                             new Adds.StepRule(1f, 40f),
                             new Adds.StepRule(2f, 50f),
                         });
-
+                    }
                     if (ScienceChecklistAddon.Config.ScienceThreshold != scienceThreshold)
                     {
                         ScienceChecklistAddon.Config.ScienceThreshold = scienceThreshold;
                         ScienceChecklistAddon.Config.Save();
                     }
 
-                    string format;
-                    int width;
-                    if (ScienceChecklistAddon.Config.VeryLowMinScience && (scienceThreshold < 1f))
+                    string format = "F1";
+                    int width = 26;
+                    if (ScienceChecklistAddon.Config.VeryLowMinScience)
                     {
-                        format = "F3";
+                        if (scienceThreshold < 0.005f)
+                        {
+                            format = "F4";
+                        }
+                        else if (scienceThreshold < 0.01f)
+                        {
+                            format = "F3";
+                        }
+                        else if (scienceThreshold < 0.1f)
+                        {
+                            format = "F2";
+                        }
                         width = 40;
-                    }
-                    else
-                    {
-                        format = "F1";
-                        width = 26;
                     }
                     GUILayout.Label(ScienceChecklistAddon.Config.ScienceThreshold.ToString(format), _scienceThresholdLabelStyle, GUILayout.Width(wScale(width)));
 

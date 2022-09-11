@@ -65,3 +65,4 @@ ChangeLog
 6.0.1.1
 	Fixes / evolutions by Github user @alartor
 		Fixed value of next run of experiment being calculated incorrectly when runs of experiment already done but not yet recovered at KSC.
+		Set VeryLowMinScience to range from 0.0001 to 0.1

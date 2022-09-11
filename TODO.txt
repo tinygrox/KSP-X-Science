@@ -11,6 +11,15 @@ if I understand correctly, maybe the following lines could be added after the op
 
                 new Adds.StepRule(0.001f, 0.01f),
                 new Adds.StepRule(0.01f, 0.1f),
+
+====>	[alartor]: FIXED
+====>	Modified so that "VeryLowMinScience" actually sets the slider to go from 0.0001 to 0.1
+====>	Updated tooltip text for the "VeryLowMinScience" option in the settings window accordingly.
+====>	Updated StepRules accordingly and the "pow" parameter so that the "AcceleratedSlider" goes through reasonable steps.
+====>	Modified format so that only significant decimal digits (i.e. not rightmost zeros) are shown.
+
+
+
 2.- Regarding the inaccurate amount reported in the "Hear and Now" window (see this quote from my previous post):
 
   On 7/4/2022 at 5:08 PM, alartor said:
