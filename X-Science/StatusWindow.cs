@@ -456,7 +456,7 @@ namespace ScienceChecklist
                 {
                     y = progressRect.y + 1,
                 };
-                GUI.Label(labelRect, string.Format("{0:0.#}  /  {1:0.#}", curr, total), _progressLabelStyle);
+                GUI.Label(labelRect, string.Format("{0:0.##}/{1:0.##}", curr, total), _progressLabelStyle);
             }
         }
 

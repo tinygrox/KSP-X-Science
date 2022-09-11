@@ -73,6 +73,9 @@ to
 
                 GUI.Label(labelRect, string.Format("{0:0.##}  /  {1:0.##}", curr, total), _progressLabelStyle);
 
+====>	[alartor]: FIXED
+====>	Tweaked format so that value is shown with two decimal digits and still fits inside the progress bar, both in "Here and Now" and main windows.
+
 
 
 OTHER CHANGES:

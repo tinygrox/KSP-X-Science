@@ -671,7 +671,7 @@ namespace ScienceChecklist
 			var progressRect = new Rect(rect)
 			{
 				xMin = rect.xMax - (compact ? wScale(75) : wScale(105)),
-				xMax = rect.xMax - (compact ? wScale(40) : wScale(40)),
+				xMax = rect.xMax - (compact ? wScale(40) : wScale(35)),
 				y = rect.y + (compact ? wScale(1) : wScale(3)),
 			};
 			GUI.Label(labelRect, exp.Description, labelStyle);
@@ -728,11 +728,11 @@ namespace ScienceChecklist
 
 			if (showValues)
 			{
-			var labelRect = new Rect(rect)
-			{
-				y = rect.y - wScale(1),
+				var labelRect = new Rect(rect)
+				{
+					y = rect.y - wScale(1),
 				};
-				GUI.Label(labelRect, string.Format("{0:0.#}  /  {1:0.#}", curr, total), _progressLabelStyle);
+				GUI.Label(labelRect, string.Format("{0:0.##}  /  {1:0.##}", curr, total), _progressLabelStyle);
 			}
 		}
 
