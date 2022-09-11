@@ -390,19 +390,22 @@ namespace ScienceChecklist
             bool ExperimentRunnable = CanRunExperiment(exp, true);
             Rect buttonRect = new Rect(rect) { xMax = wScale(200) };
             string scienceValueString = " (" + exp.NextScienceIncome.ToString(
-                ScienceChecklistAddon.Config.VeryLowMinScience && exp.NextScienceIncome < 1 ? "F3" : "F1") + ")";
+                ScienceChecklistAddon.Config.VeryLowMinScience && exp.NextScienceIncome < 1 ? "F3" : "F1"
+                ) + ")\n" + (exp.CompletedScience + exp.OnboardScience).ToString("F2");
+            GUIContent expContent = new GUIContent(exp.ShortDescription + scienceValueString,
+                "Experiment description (next run value)\n\nRecovered+OnBoard value");
 
             if (ExperimentRunnable)
             {
                 _experimentButtonStyle.normal.textColor = exp.IsComplete ? Color.green : Color.yellow;
-                if (GUI.Button(buttonRect, exp.ShortDescription + scienceValueString, _experimentButtonStyle))
+                if (GUI.Button(buttonRect, expContent, _experimentButtonStyle))
                 {
                     RunExperiment(exp);
                 }
             }
             else
             {
-                GUI.Label(buttonRect, exp.ShortDescription + scienceValueString, _experimentLabelStyle);
+                GUI.Label(buttonRect, expContent, _experimentLabelStyle);
             }
             int Dif = (int)(((rect.yMax - rect.yMin) - wScale(13)) / 2);
             Rect progressRect = new Rect(wScale(205), rect.yMin + Dif, wScale(50), wScale(13));

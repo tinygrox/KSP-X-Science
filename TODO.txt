@@ -87,3 +87,7 @@ OTHER CHANGES:
 
 ====>	[alartor]
 ====>	Slightly tweaked font sizes in experiment buttons and progress bars, so that text fits correctly inside their alloted space.
+
+====>	[alartor]
+====>	Added the Recoverd+OnBoard science value to be shown below experiment description on experiment buttons in the "Here and Now" window.
+====>	Added tooltip describing the text shown on the experiment buttons in the "Here and Now" window.
