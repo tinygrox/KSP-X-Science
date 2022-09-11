@@ -28,6 +28,7 @@ namespace ScienceChecklist
         private readonly Logger _logger;
         private int _previousNumExperiments;
         private float _previousUiScale;
+        private float _previousSciThreshold;
         private bool _previousHideMinSciSlider;
         private GUIStyle _experimentButtonStyle;
         private GUIStyle _experimentLabelStyle;
@@ -226,6 +227,21 @@ namespace ScienceChecklist
 
                 }
             }
+            else if (   (   ScienceChecklistAddon.Config.VeryLowMinScience
+                         && ScienceChecklistAddon.Config.ScienceThreshold > 0.1f
+                        )
+                     || (  !ScienceChecklistAddon.Config.VeryLowMinScience
+                         && ScienceChecklistAddon.Config.ScienceThreshold < 0.1f
+                        )
+                    )
+            {
+                // VeryLowMinScience option was toggled while MinScience slider hidden.
+                // Need to adjust ScienceThreshold accordingly (and re-classify experiments as completed/incomplete)!
+                ScienceChecklistAddon.Config.ScienceThreshold = 0.1f;
+                ScienceChecklistAddon.Config.Save();
+                _parent.Science.UpdateAllScienceInstances();
+                _filter.UpdateFilter();
+            }
 
             int Top = wScale(90 - (ScienceChecklistAddon.Config.HideMinScienceSlider ? 25 : 0));
             if (_filter.DisplayScienceInstances != null)
@@ -299,6 +315,7 @@ namespace ScienceChecklist
             if (   _previousNumExperiments != _filter.DisplayScienceInstances.Count
                 || ScienceChecklistAddon.Config.UiScale != _previousUiScale
                 || ScienceChecklistAddon.Config.HideMinScienceSlider != _previousHideMinSciSlider
+                || ScienceChecklistAddon.Config.ScienceThreshold != _previousSciThreshold
                )
             {
                 windowPos.height = wScale(30) + ((_filter.DisplayScienceInstances.Count + 1) * wScale(35));
@@ -306,6 +323,7 @@ namespace ScienceChecklist
                 _previousNumExperiments = _filter.DisplayScienceInstances.Count;
                 _previousUiScale = ScienceChecklistAddon.Config.UiScale;
                 _previousHideMinSciSlider = ScienceChecklistAddon.Config.HideMinScienceSlider;
+                _previousSciThreshold = ScienceChecklistAddon.Config.ScienceThreshold;
             }
 
             base.DrawWindow();
