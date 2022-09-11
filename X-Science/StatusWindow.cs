@@ -199,6 +199,8 @@ namespace ScienceChecklist
                     {
                         ScienceChecklistAddon.Config.ScienceThreshold = scienceThreshold;
                         ScienceChecklistAddon.Config.Save();
+                        _parent.Science.UpdateAllScienceInstances();
+                        _filter.UpdateFilter();
                     }
 
                     string format = "F1";

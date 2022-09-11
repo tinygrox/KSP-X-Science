@@ -48,6 +48,7 @@ namespace ScienceChecklist
 
 		private string _lastTooltip;
 		private bool _compactMode;
+		private float _previousSciThreshold;
 
 		private readonly Texture2D _progressTexture;
 		private readonly Texture2D _completeTexture;
@@ -410,6 +411,13 @@ namespace ScienceChecklist
 
 			GUILayout.BeginVertical(GUILayout.Width(wScale(480)), GUILayout.ExpandHeight(true));
 
+			if (ScienceChecklistAddon.Config.ScienceThreshold != _previousSciThreshold)
+			{
+				_parent.Science.UpdateAllScienceInstances();
+				_filter.UpdateFilter();
+				_previousSciThreshold = ScienceChecklistAddon.Config.ScienceThreshold;
+			}
+
 			ProgressBar(
 				wScale(new Rect(10, 27, 480, 13)),
 				_filter.TotalCount == 0 ? 1 : _filter.CompleteCount,
@@ -552,6 +560,13 @@ namespace ScienceChecklist
 			GUILayout.BeginHorizontal( );
 			GUILayout.Label("", GUILayout.Height(wScale(20)));
 			GUILayout.EndHorizontal( );
+
+			if (ScienceChecklistAddon.Config.ScienceThreshold != _previousSciThreshold)
+			{
+				_parent.Science.UpdateAllScienceInstances();
+				_filter.UpdateFilter();
+				_previousSciThreshold = ScienceChecklistAddon.Config.ScienceThreshold;
+			}
 
 			GUILayout.BeginVertical();
 			_compactScrollPos = GUILayout.BeginScrollView(_compactScrollPos);
