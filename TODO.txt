@@ -81,3 +81,5 @@ OTHER CHANGES:
 
 ====>	[alartor]
 ====>	Fixed "Here and Now" and Main window (both normal and compact) not showing (or hiding) experiments after a change in the MinScience threshold implies experiment is now incomplete (or completed).
+====>	Fixed "Here and Now" window size not updating correctly when hiding MinScience slider.
+====>	Fixed position of experiment buttons in "Here and Now" window when MinScience slider hidden.

@@ -28,6 +28,7 @@ namespace ScienceChecklist
         private readonly Logger _logger;
         private int _previousNumExperiments;
         private float _previousUiScale;
+        private bool _previousHideMinSciSlider;
         private GUIStyle _experimentButtonStyle;
         private GUIStyle _experimentLabelStyle;
         private GUIStyle _situationStyle;
@@ -226,7 +227,7 @@ namespace ScienceChecklist
                 }
             }
 
-            int Top = wScale(90 - (ScienceChecklistAddon.Config.HideMinScienceSlider?10:0));
+            int Top = wScale(90 - (ScienceChecklistAddon.Config.HideMinScienceSlider ? 25 : 0));
             if (_filter.DisplayScienceInstances != null)
             {
                 for (var i = 0; i < _filter.DisplayScienceInstances.Count; i++)
@@ -238,16 +239,12 @@ namespace ScienceChecklist
                         var rect = new Rect(wScale(5), Top, wScale(250), wScale(30));
                         DrawExperiment(experiment, rect);
                         Top += wScale(35);
+                        GUILayout.Space(wScale(35));
                     }
                 }
             }
             else
                 _logger.Trace("DisplayExperiments is null");
-
-
-
-            if (_filter.DisplayScienceInstances.Count > 0)
-                GUILayout.Space(wScale(_filter.DisplayScienceInstances.Count * 35)); // Leave space for experiments, as drawn above
 
             GUILayout.Space(wScale(10));
 
@@ -299,12 +296,16 @@ namespace ScienceChecklist
         {
             // The window needs to get smaller when the number of experiments drops.
             // This allows that while preventing flickering.
-            if (_previousNumExperiments != _filter.DisplayScienceInstances.Count || ScienceChecklistAddon.Config.UiScale != _previousUiScale)
+            if (   _previousNumExperiments != _filter.DisplayScienceInstances.Count
+                || ScienceChecklistAddon.Config.UiScale != _previousUiScale
+                || ScienceChecklistAddon.Config.HideMinScienceSlider != _previousHideMinSciSlider
+               )
             {
                 windowPos.height = wScale(30) + ((_filter.DisplayScienceInstances.Count + 1) * wScale(35));
                 windowPos.width = wScale(defaultWindowSize.x);
                 _previousNumExperiments = _filter.DisplayScienceInstances.Count;
                 _previousUiScale = ScienceChecklistAddon.Config.UiScale;
+                _previousHideMinSciSlider = ScienceChecklistAddon.Config.HideMinScienceSlider;
             }
 
             base.DrawWindow();
