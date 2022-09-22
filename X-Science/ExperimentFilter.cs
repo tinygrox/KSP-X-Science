@@ -218,7 +218,7 @@ namespace ScienceChecklist {
 
                 if (subjectOnboardData.Length > 1)
                 {
-                    experimentValue /= Mathf.Pow(4f, subjectOnboardData.Length - 1);
+                    experimentValue *= Mathf.Pow(1-(exp.ScienceExperiment.baseValue/exp.ScienceExperiment.scienceCap), subjectOnboardData.Length - 1);
                 }
             }
 

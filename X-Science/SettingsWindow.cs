@@ -96,7 +96,7 @@ namespace ScienceChecklist
 			}
 
 
-			toggle = GUILayout.Toggle(ScienceChecklistAddon.Config.VeryLowMinScience, new GUIContent("Low Min Science", "Minimum science slider in the Here & Now window will go to 0.001"), toggleStyle);
+			toggle = GUILayout.Toggle(ScienceChecklistAddon.Config.VeryLowMinScience, new GUIContent("Low Min Science", "Minimum science slider in the Here & Now window will go fom 0.0001 to 0.1"), toggleStyle);
 			if (toggle != ScienceChecklistAddon.Config.VeryLowMinScience)
 			{
 				ScienceChecklistAddon.Config.VeryLowMinScience = toggle;

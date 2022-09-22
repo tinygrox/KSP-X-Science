@@ -61,3 +61,15 @@ ChangeLog
 6.0.1
 	Fixed all areas where 0.1 was hardcoded in place for the minimum  science
 	Added option to totally hide the Min Science Slider on the Here & Now window
+
+6.0.1.1
+	Fixes / evolutions by Github user @alartor
+		Fixed value of next run of experiment being calculated incorrectly when runs of experiment already done but not yet recovered at KSC.
+		Set VeryLowMinScience to range from 0.0001 to 0.1
+		Fixed experiments not being re-classified as completed or incomplete (and hidden or shown) after a change in the MinScience threshold changes their "status".
+		Fixed 'Here and Now' window not resizing correctly when hiding MinScience slider.
+		Fixed position of experiment buttons in 'Here and Now' window when MinScience slider hidden.
+		Fixed experiments not being re-classified as incomplete (or completed) when switching between regular and VeryLowMinScience if MinScience slider hidden.
+		Fixed text spanning outside of buttons and/or progress bars in some cases.
+		Added the Recoverd+OnBoard science value to be shown below experiment description on experiment buttons in the 'Here and Now' window, and tooltip describing button contents.
+		Experiment values now shown with up to two decimal digits in progress bars.

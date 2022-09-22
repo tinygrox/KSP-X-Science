@@ -11,6 +11,15 @@ if I understand correctly, maybe the following lines could be added after the op
 
                 new Adds.StepRule(0.001f, 0.01f),
                 new Adds.StepRule(0.01f, 0.1f),
+
+====>	[alartor]: FIXED
+====>	Modified so that "VeryLowMinScience" actually sets the slider to go from 0.0001 to 0.1
+====>	Updated tooltip text for the "VeryLowMinScience" option in the settings window accordingly.
+====>	Updated StepRules accordingly and the "pow" parameter so that the "AcceleratedSlider" goes through reasonable steps.
+====>	Modified format so that only significant decimal digits (i.e. not rightmost zeros) are shown.
+
+
+
 2.- Regarding the inaccurate amount reported in the "Hear and Now" window (see this quote from my previous post):
 
   On 7/4/2022 at 5:08 PM, alartor said:
@@ -52,9 +61,36 @@ experimentValue /= Mathf.Pow( (1-(.baseValue/.scienceCap))f , subjectOnboardData
 			}
 where calculating again "next" would give the correct value for "experimentValue" variable above. Also of note is that around this last lines of code, the 0.1 value for min science is again hard-coded...
 
+====>	[alartor]: FIXED
+====>	Fixed the expermientValue formula so that the values are calculated correctly.
+
+
+
 3.- Finally, I'm wondering if line 408 in StatusWindow.cs could be changed so that in the main window a two decimal digits precision be shown, from:
 
                 GUI.Label(labelRect, string.Format("{0:0.#}  /  {1:0.#}", curr, total), _progressLabelStyle);
 to 
 
                 GUI.Label(labelRect, string.Format("{0:0.##}  /  {1:0.##}", curr, total), _progressLabelStyle);
+
+====>	[alartor]: FIXED
+====>	Tweaked format so that value is shown with two decimal digits and still fits inside the progress bar, both in "Here and Now" and main windows.
+
+
+
+OTHER CHANGES:
+
+
+
+====>	[alartor]
+====>	Fixed "Here and Now" and Main window (both normal and compact) not showing (or hiding) experiments after a change in the MinScience threshold implies experiment is now incomplete (or completed).
+====>	Fixed "Here and Now" window size not updating correctly when hiding MinScience slider.
+====>	Fixed position of experiment buttons in "Here and Now" window when MinScience slider hidden.
+====>	Fixed experiments not being re-classified as incomplete (or completed) when switching between regular and VeryLowMinScience if MinScience slider hidden.
+
+====>	[alartor]
+====>	Slightly tweaked font sizes in experiment buttons and progress bars, so that text fits correctly inside their alloted space.
+
+====>	[alartor]
+====>	Added the Recoverd+OnBoard science value to be shown below experiment description on experiment buttons in the "Here and Now" window.
+====>	Added tooltip describing the text shown on the experiment buttons in the "Here and Now" window.

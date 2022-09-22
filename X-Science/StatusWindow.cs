@@ -28,6 +28,8 @@ namespace ScienceChecklist
         private readonly Logger _logger;
         private int _previousNumExperiments;
         private float _previousUiScale;
+        private float _previousSciThreshold;
+        private bool _previousHideMinSciSlider;
         private GUIStyle _experimentButtonStyle;
         private GUIStyle _experimentLabelStyle;
         private GUIStyle _situationStyle;
@@ -86,7 +88,7 @@ namespace ScienceChecklist
             {
                 fontStyle = FontStyle.BoldAndItalic,
                 alignment = TextAnchor.MiddleCenter,
-                fontSize = wScale(11),
+                fontSize = wScale(9),
                 normal = {
                     textColor = new Color(0.322f, 0.298f, 0.004f)
                 }
@@ -117,11 +119,11 @@ namespace ScienceChecklist
             };
             _experimentButtonStyle = new GUIStyle(_skin.button)
             {
-                fontSize = wScale(14)
+                fontSize = wScale(12)
             };
             _experimentLabelStyle = new GUIStyle(_experimentButtonStyle)
             {
-                fontSize = wScale(14),
+                fontSize = wScale(12),
                 normal = { textColor = Color.black }
             };
         }
@@ -170,38 +172,78 @@ namespace ScienceChecklist
                 {
                     GUILayout.Label("Min Science", _scienceThresholdLabelStyle);
 
-                    float minSci = ScienceChecklistAddon.Config.VeryLowMinScience ? 0.001f : .1f;
-                    float prev_scienceThreshold = Math.Max(ScienceChecklistAddon.Config.ScienceThreshold, minSci);
-                    float scienceThreshold = Adds.AcceleratedSlider(prev_scienceThreshold, minSci, 50f, 1.8f, new[] {
+                    float scienceThreshold = 0f;
+                    if (ScienceChecklistAddon.Config.VeryLowMinScience)
+                    {
+                        float minSci = 0.0001f;
+                        float maxSci = 0.1f;
+                        float prev_scienceThreshold = Math.Min(Math.Max(ScienceChecklistAddon.Config.ScienceThreshold, minSci), maxSci);
+                        scienceThreshold = Adds.AcceleratedSlider(prev_scienceThreshold, minSci, maxSci, 2.7f, new[]
+                        {
+                            new Adds.StepRule(0.0001f, 0.005f),
+                            new Adds.StepRule(0.001f, 0.01f),
+                            new Adds.StepRule(0.01f, 0.1f),
+                        });
+                    }
+                    else
+                    {
+                        float minSci = 0.1f;
+                        float maxSci = 50f;
+                        float prev_scienceThreshold = Math.Min(Math.Max(ScienceChecklistAddon.Config.ScienceThreshold, minSci), maxSci);
+                        scienceThreshold = Adds.AcceleratedSlider(prev_scienceThreshold, minSci, maxSci, 1.8f, new[]
+                        {
                             new Adds.StepRule(0.5f, 10f),
                             new Adds.StepRule(1f, 40f),
                             new Adds.StepRule(2f, 50f),
                         });
-
+                    }
                     if (ScienceChecklistAddon.Config.ScienceThreshold != scienceThreshold)
                     {
                         ScienceChecklistAddon.Config.ScienceThreshold = scienceThreshold;
                         ScienceChecklistAddon.Config.Save();
+                        _parent.Science.UpdateAllScienceInstances();
+                        _filter.UpdateFilter();
                     }
 
-                    string format;
-                    int width;
-                    if (ScienceChecklistAddon.Config.VeryLowMinScience && (scienceThreshold < 1f))
+                    string format = "F1";
+                    int width = 26;
+                    if (ScienceChecklistAddon.Config.VeryLowMinScience)
                     {
-                        format = "F3";
+                        if (scienceThreshold < 0.005f)
+                        {
+                            format = "F4";
+                        }
+                        else if (scienceThreshold < 0.01f)
+                        {
+                            format = "F3";
+                        }
+                        else if (scienceThreshold < 0.1f)
+                        {
+                            format = "F2";
+                        }
                         width = 40;
-                    }
-                    else
-                    {
-                        format = "F1";
-                        width = 26;
                     }
                     GUILayout.Label(ScienceChecklistAddon.Config.ScienceThreshold.ToString(format), _scienceThresholdLabelStyle, GUILayout.Width(wScale(width)));
 
                 }
             }
+            else if (   (   ScienceChecklistAddon.Config.VeryLowMinScience
+                         && ScienceChecklistAddon.Config.ScienceThreshold > 0.1f
+                        )
+                     || (  !ScienceChecklistAddon.Config.VeryLowMinScience
+                         && ScienceChecklistAddon.Config.ScienceThreshold < 0.1f
+                        )
+                    )
+            {
+                // VeryLowMinScience option was toggled while MinScience slider hidden.
+                // Need to adjust ScienceThreshold accordingly (and re-classify experiments as completed/incomplete)!
+                ScienceChecklistAddon.Config.ScienceThreshold = 0.1f;
+                ScienceChecklistAddon.Config.Save();
+                _parent.Science.UpdateAllScienceInstances();
+                _filter.UpdateFilter();
+            }
 
-            int Top = wScale(90 - (ScienceChecklistAddon.Config.HideMinScienceSlider?10:0));
+            int Top = wScale(90 - (ScienceChecklistAddon.Config.HideMinScienceSlider ? 25 : 0));
             if (_filter.DisplayScienceInstances != null)
             {
                 for (var i = 0; i < _filter.DisplayScienceInstances.Count; i++)
@@ -213,16 +255,12 @@ namespace ScienceChecklist
                         var rect = new Rect(wScale(5), Top, wScale(250), wScale(30));
                         DrawExperiment(experiment, rect);
                         Top += wScale(35);
+                        GUILayout.Space(wScale(35));
                     }
                 }
             }
             else
                 _logger.Trace("DisplayExperiments is null");
-
-
-
-            if (_filter.DisplayScienceInstances.Count > 0)
-                GUILayout.Space(wScale(_filter.DisplayScienceInstances.Count * 35)); // Leave space for experiments, as drawn above
 
             GUILayout.Space(wScale(10));
 
@@ -274,12 +312,18 @@ namespace ScienceChecklist
         {
             // The window needs to get smaller when the number of experiments drops.
             // This allows that while preventing flickering.
-            if (_previousNumExperiments != _filter.DisplayScienceInstances.Count || ScienceChecklistAddon.Config.UiScale != _previousUiScale)
+            if (   _previousNumExperiments != _filter.DisplayScienceInstances.Count
+                || ScienceChecklistAddon.Config.UiScale != _previousUiScale
+                || ScienceChecklistAddon.Config.HideMinScienceSlider != _previousHideMinSciSlider
+                || ScienceChecklistAddon.Config.ScienceThreshold != _previousSciThreshold
+               )
             {
                 windowPos.height = wScale(30) + ((_filter.DisplayScienceInstances.Count + 1) * wScale(35));
                 windowPos.width = wScale(defaultWindowSize.x);
                 _previousNumExperiments = _filter.DisplayScienceInstances.Count;
                 _previousUiScale = ScienceChecklistAddon.Config.UiScale;
+                _previousHideMinSciSlider = ScienceChecklistAddon.Config.HideMinScienceSlider;
+                _previousSciThreshold = ScienceChecklistAddon.Config.ScienceThreshold;
             }
 
             base.DrawWindow();
@@ -346,19 +390,22 @@ namespace ScienceChecklist
             bool ExperimentRunnable = CanRunExperiment(exp, true);
             Rect buttonRect = new Rect(rect) { xMax = wScale(200) };
             string scienceValueString = " (" + exp.NextScienceIncome.ToString(
-                ScienceChecklistAddon.Config.VeryLowMinScience && exp.NextScienceIncome < 1 ? "F3" : "F1") + ")";
+                ScienceChecklistAddon.Config.VeryLowMinScience && exp.NextScienceIncome < 1 ? "F3" : "F1"
+                ) + ")\n" + (exp.CompletedScience + exp.OnboardScience).ToString("F2");
+            GUIContent expContent = new GUIContent(exp.ShortDescription + scienceValueString,
+                "Experiment description (next run value)\n\nRecovered+OnBoard value");
 
             if (ExperimentRunnable)
             {
                 _experimentButtonStyle.normal.textColor = exp.IsComplete ? Color.green : Color.yellow;
-                if (GUI.Button(buttonRect, exp.ShortDescription + scienceValueString, _experimentButtonStyle))
+                if (GUI.Button(buttonRect, expContent, _experimentButtonStyle))
                 {
                     RunExperiment(exp);
                 }
             }
             else
             {
-                GUI.Label(buttonRect, exp.ShortDescription + scienceValueString, _experimentLabelStyle);
+                GUI.Label(buttonRect, expContent, _experimentLabelStyle);
             }
             int Dif = (int)(((rect.yMax - rect.yMin) - wScale(13)) / 2);
             Rect progressRect = new Rect(wScale(205), rect.yMin + Dif, wScale(50), wScale(13));
@@ -409,7 +456,7 @@ namespace ScienceChecklist
                 {
                     y = progressRect.y + 1,
                 };
-                GUI.Label(labelRect, string.Format("{0:0.#}  /  {1:0.#}", curr, total), _progressLabelStyle);
+                GUI.Label(labelRect, string.Format("{0:0.##}/{1:0.##}", curr, total), _progressLabelStyle);
             }
         }
 
