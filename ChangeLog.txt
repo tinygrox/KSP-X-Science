@@ -73,3 +73,6 @@ ChangeLog
 		Fixed text spanning outside of buttons and/or progress bars in some cases.
 		Added the Recoverd+OnBoard science value to be shown below experiment description on experiment buttons in the 'Here and Now' window, and tooltip describing button contents.
 		Experiment values now shown with up to two decimal digits in progress bars.
+
+6.0.1.2
+	Fix path for saving and loading settings.cfg file
