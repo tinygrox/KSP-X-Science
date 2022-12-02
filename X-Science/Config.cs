@@ -12,6 +12,7 @@ namespace ScienceChecklist
         private readonly Logger _logger;
         //private readonly string _assemblyPath = Path.GetDirectoryName(typeof(ScienceChecklistAddon).Assembly.Location);
         private readonly string _file = "/GameData/[x]_Science!/PluginData/settings.cfg";
+        private string SettingsFile {  get { var s = KSPUtil.ApplicationRootPath + _file; _logger.Info("SettingsFile: " + s); return s; } }
         private Dictionary<GameScenes, Dictionary<string, WindowSettings>> _windowSettings = new Dictionary<GameScenes, Dictionary<string, WindowSettings>>();
 
         private bool _hideCompleteExperiments;
@@ -312,8 +313,8 @@ namespace ScienceChecklist
 
 
 
-            _logger.Trace( "Saving to" + KSPUtil.ApplicationRootPath + _file );
-            node.Save(KSPUtil.ApplicationRootPath+ _file);
+            _logger.Trace( "Saving to" + SettingsFile);
+            node.Save(SettingsFile);
         }
 
 
@@ -342,10 +343,10 @@ namespace ScienceChecklist
 
             try
             {
-                _logger.Trace("Loading from " + KSPUtil.ApplicationRootPath + _file);
-                if (File.Exists(KSPUtil.ApplicationRootPath+ _file))
+                _logger.Trace("Loading from " + SettingsFile);
+                if (File.Exists(SettingsFile))
                 {
-                    var node = ConfigNode.Load(KSPUtil.ApplicationRootPath + _file);
+                    var node = ConfigNode.Load(SettingsFile);
                     if (node == null) return;
                     var root = node.GetNode("ScienceChecklist");
                     if (root == null) return;

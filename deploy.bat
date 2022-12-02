@@ -9,6 +9,9 @@ rem    but not always
 
 set H=%KSPDIR%
 
+rem set H=U:\SteamLibrary\steamapps\common\Kerbal Space Program
+
+
 set GAMEDIR="[x]_Science!"
 set GAMEDATA="GameData"
 set VERSIONFILE=%GAMEDIR%.version
@@ -23,4 +26,4 @@ copy /Y %VERSIONFILE% %GAMEDATA%\%GAMEDIR%
 xcopy /y /s /I %GAMEDATA%\%GAMEDIR% "%H%\GameData\%GAMEDIR%"
 xcopy /y /s /I %GAMEDATA%\%GAMEDIR% "%DP0%\GameData\%GAMEDIR%"
 
-rem pause
+ rem pause

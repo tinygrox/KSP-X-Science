@@ -32,7 +32,8 @@ namespace ScienceChecklist
 			int cnt = sar.Length;
 
 			Texture2D tex = new Texture2D(width, height, TextureFormat.ARGB32, false);
-			ToolbarControl.LoadImageFromFile(ref tex, "GameData/[x]_Science!/PluginData/Icons/" + sar[cnt-2]);
+
+			ToolbarControl.LoadImageFromFile(ref tex, KSPUtil.ApplicationRootPath + "GameData/[x]_Science!/PluginData/Icons/" + sar[cnt-2]);
 			return tex;
 #endif
 		}
