@@ -120,14 +120,17 @@ namespace ScienceChecklist
 		#region FIELDS
 
 		private readonly string _ownerName;
-
+#if DEBUG
 		private const LogLevel MaxLogLevel = LogLevel.Trace;
 
-		#endregion
+#else
+		private const LogLevel MaxLogLevel = LogLevel.Error;
+#endif
+        #endregion
 
-		#region LogLevel
+        #region LogLevel
 
-		private enum LogLevel
+        private enum LogLevel
 		{
 			Fatal = 0,
 			Error = 1,
