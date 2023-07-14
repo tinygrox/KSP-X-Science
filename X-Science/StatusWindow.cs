@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using KSP.Localization;
 
 
 
@@ -40,12 +41,21 @@ namespace ScienceChecklist
         private IList<ModuleScienceExperiment> _DMModuleScienceAnimates;
         private IList<ModuleScienceExperiment> _DMModuleScienceAnimateGenerics;
         private Dictionary<string, bool> _availableScienceExperiments;
+        private static string str_HereAndNow_Title = Localizer.Format("#XScience_HereAndNow_Title");
+        private static string str_HereAndNow_MinScience = Localizer.Format("#XScience_HereAndNow_MinScience");
+        private static string str_HereAndNow_TimeWarpStop = Localizer.Format("#XScience_HereAndNow_TimeWarpStop");
+        private static string str_HereAndNow_TimeWarpNotStop = Localizer.Format("#XScience_HereAndNow_TimeWarpNotStop");
+        private static string str_HereAndNow_AlertSound = Localizer.Format("#XScience_HereAndNow_AlertSound");
+        private static string str_HereAndNow_NoSound = Localizer.Format("#XScience_HereAndNow_NoSound");
+        private static string str_HereAndNow_ShowResults = Localizer.Format("#XScience_HereAndNow_ShowResults");
+        private static string str_HereAndNow_SuppressResults = Localizer.Format("#XScience_HereAndNow_SuppressResults");
+        private static string str_HereAndNow_ExperimentDescription = Localizer.Format("#XScience_HereAndNow_ExperimentDescription");
 
         public event EventHandler OnCloseEvent;
         public event EventHandler OnOpenEvent;
 
         public StatusWindow(ScienceChecklistAddon Parent)
-            : base("[x] Science! Here and Now", 250, 30)
+            : base(str_HereAndNow_Title, 250, 30) // "[x] Science! Here and Now"
         {
             _parent = Parent;
             UiScale = ScienceChecklistAddon.Config.UiScale;
@@ -170,7 +180,7 @@ namespace ScienceChecklist
                 GUILayout.Space(wScale(10));
                 using (new GUILayout.HorizontalScope())
                 {
-                    GUILayout.Label("Min Science", _scienceThresholdLabelStyle);
+                    GUILayout.Label(str_HereAndNow_MinScience, _scienceThresholdLabelStyle); // "Min Science"
 
                     float scienceThreshold = 0f;
                     if (ScienceChecklistAddon.Config.VeryLowMinScience)
@@ -267,9 +277,9 @@ namespace ScienceChecklist
             GUILayout.BeginHorizontal();
             GUIContent Content = null;
             if (ScienceChecklistAddon.Config.StopTimeWarp)
-                Content = new GUIContent(_GfxTimeWarp, "Time warp will be stopped");
+                Content = new GUIContent(_GfxTimeWarp, str_HereAndNow_TimeWarpStop); // "Time warp will be stopped"
             else
-                Content = new GUIContent(_GfxTimeWarpOff, "Time warp will not be stopped");
+                Content = new GUIContent(_GfxTimeWarpOff, str_HereAndNow_TimeWarpNotStop); // "Time warp will not be stopped"
             if (GUILayout.Button(Content, GUILayout.Width(wScale(36)), GUILayout.Height(wScale(32))))
             {
                 ScienceChecklistAddon.Config.StopTimeWarp = !ScienceChecklistAddon.Config.StopTimeWarp;
@@ -279,9 +289,9 @@ namespace ScienceChecklist
 
 
             if (ScienceChecklistAddon.Config.PlayNoise)
-                Content = new GUIContent(_GfxAudioAlert, "Audio alert will sound");
+                Content = new GUIContent(_GfxAudioAlert, str_HereAndNow_AlertSound); // "Audio alert will sound"
             else
-                Content = new GUIContent(_GfxAudioAlertOff, "No audio alert");
+                Content = new GUIContent(_GfxAudioAlertOff, str_HereAndNow_NoSound); // "No audio alert"
             if (GUILayout.Button(Content, GUILayout.Width(wScale(36)), GUILayout.Height(wScale(32))))
             {
                 ScienceChecklistAddon.Config.PlayNoise = !ScienceChecklistAddon.Config.PlayNoise;
@@ -291,9 +301,9 @@ namespace ScienceChecklist
 
 
             if (ScienceChecklistAddon.Config.ShowResultsWindow)
-                Content = new GUIContent(_GfxResultsWindow, "Show results window");
+                Content = new GUIContent(_GfxResultsWindow, str_HereAndNow_ShowResults); //"Show results window"
             else
-                Content = new GUIContent(_GfxResultsWindowOff, "Suppress results window");
+                Content = new GUIContent(_GfxResultsWindowOff, str_HereAndNow_SuppressResults); // "Suppress results window"
             if (GUILayout.Button(Content, GUILayout.Width(wScale(36)), GUILayout.Height(wScale(32))))
             {
                 ScienceChecklistAddon.Config.ShowResultsWindow = !ScienceChecklistAddon.Config.ShowResultsWindow;
@@ -340,35 +350,35 @@ namespace ScienceChecklist
             if (_filter.CurrentSituation != null)
             {
                 Body Body = _filter.CurrentSituation.Body;
-                Text += "Body: " + GameHelper.LocalizeBodyName(Body.CelestialBody.displayName) + "\n";
+                Text += Localizer.Format("#XScience_Status_BodyName", GameHelper.LocalizeBodyName(Body.CelestialBody.displayName)) + "\n"; // "Body: " + GameHelper.LocalizeBodyName(Body.CelestialBody.displayName) + "\n"
                 Text += Body.Type;
                 if (Body.IsHome)
-                    Text += " - Home!";
+                    Text += " - " + Localizer.Format("#XScience_Status_BodyisHome"); //Home! 
                 Text += "\n\n";
-                Text += "Space high: " + (Body.CelestialBody.scienceValues.spaceAltitudeThreshold / 1000) + "km\n";
+                Text += Localizer.Format("#XScience_Status_SpaceHigh", Body.CelestialBody.scienceValues.spaceAltitudeThreshold / 1000) + "\n"; // "Space high: " + (Body.CelestialBody.scienceValues.spaceAltitudeThreshold / 1000) + "km\n"
 
                 if (Body.HasAtmosphere)
                 {
-                    Text += "Atmos depth: " + (Body.CelestialBody.atmosphereDepth / 1000) + "km\n";
-                    Text += "Flying high: " + (Body.CelestialBody.scienceValues.flyingAltitudeThreshold / 1000) + "km\n";
+                    Text += Localizer.Format("#XScience_Status_AtmosDepth", Body.CelestialBody.atmosphereDepth / 1000) + "\n"; // "Atmos depth: " + (Body.CelestialBody.atmosphereDepth / 1000) + "km\n"
+                    Text += Localizer.Format("#XScience_Status_FlyingHigh", Body.CelestialBody.scienceValues.flyingAltitudeThreshold / 1000) + "\n"; // "Flying high: " + (Body.CelestialBody.scienceValues.flyingAltitudeThreshold / 1000) + "km\n"
                     if (Body.HasOxygen)
-                        Text += "Has oxygen - jets work\n";
+                        Text += Localizer.Format("#XScience_Status_HasOxygen") + "\n"; // "Has oxygen - jets work\n"
                 }
                 else
-                    Text += "No kind of atmosphere\n";
+                    Text += Localizer.Format("#XScience_Status_NoOxygen") + "\n"; //"No kind of atmosphere\n" 
 
                 if (Body.HasSurface)
                 {
                     if (Body.HasOcean)
-                        Text += "Has oceans\n";
+                        Text += Localizer.Format("#XScience_Status_HasOceans") + "\n"; // Has oceans
                 }
                 else
-                    Text += "No surface\n";
+                    Text += Localizer.Format("#XScience_Status_NoSurface") + "\n"; // No surface
 
                 Text += "\n";
             }
 
-            Text += "Current vessel: " + _parent.Science.CurrentVesselScience.Count() + " stored experiments";
+            Text += Localizer.Format("#XScience_Status_CurrentVesselStored", _parent.Science.CurrentVesselScience.Count()); // "Current vessel: " + _parent.Science.CurrentVesselScience.Count() + " stored experiments"
 
             return Text;
         }
@@ -392,8 +402,7 @@ namespace ScienceChecklist
             string scienceValueString = " (" + exp.NextScienceIncome.ToString(
                 ScienceChecklistAddon.Config.VeryLowMinScience && exp.NextScienceIncome < 1 ? "F3" : "F1"
                 ) + ")\n" + (exp.CompletedScience + exp.OnboardScience).ToString("F2");
-            GUIContent expContent = new GUIContent(exp.ShortDescription + scienceValueString,
-                "Experiment description (next run value)\n\nRecovered+OnBoard value");
+            GUIContent expContent = new GUIContent(exp.ShortDescription + scienceValueString,str_HereAndNow_ExperimentDescription); // "Experiment description (next run value)\n\nRecovered+OnBoard value"
 
             if (ExperimentRunnable)
             {
@@ -563,7 +572,7 @@ namespace ScienceChecklist
                         if (ScienceChecklistAddon.Config.PlayNoise)
                             PlayNoise();
                         if (ScienceChecklistAddon.Config.StopTimeWarp || ScienceChecklistAddon.Config.PlayNoise)
-                            ScreenMessages.PostScreenMessage("New Situation: " + _filter.CurrentSituation.Description);
+                            ScreenMessages.PostScreenMessage(Localizer.Format(" #XScience_PostMessage_NewSituation", _filter.CurrentSituation.Description)); // "New Situation: " + _filter.CurrentSituation.Description
                     }
                 }
             }

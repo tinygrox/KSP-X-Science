@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-
+using KSP.Localization;
 
 
 namespace ScienceChecklist
@@ -46,7 +46,11 @@ namespace ScienceChecklist
 		public CelestialBody Parent { get { return _parent; } }
 		public CelestialBody CelestialBody { get { return _celestialBody; } }
 
-
+		private static string GasGiant = Localizer.Format("#XScience_PlanetType_GasGiant");
+		private static string Star = Localizer.Format("#XScience_PlanetType_Star");
+		private static string Planet = Localizer.Format("#XScience_PlanetType_Planet");
+		private static string Moon = Localizer.Format("#XScience_PlanetType_Moon");
+		private static string Unknown = Localizer.Format("#XScience_PlanetType_Unknown");
 
 		// This could fail if some mode changes celestial bodies on the fly
 		// Just don't want to stick too much stuff into Update()
@@ -113,14 +117,14 @@ namespace ScienceChecklist
 		private string FigureOutType( )
 		{
 			if( _isGasGiant )
-				return "Gas Giant";
+				return GasGiant; // "Gas Giant"
 			if( _isStar )
-				return "Star";
+				return Star; // "Star"
 			if( _isPlanet )
-				return "Planet";
+				return Planet; // "Planet"
 			if( _isMoon )
-				return "Moon";
-			return "Unknown";
+				return Moon; // "Moon"
+			return Unknown; //"Unknown"
 		}
 
 		public void Update(  )

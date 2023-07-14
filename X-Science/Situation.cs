@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-
+using KSP.Localization;
 
 
 
@@ -29,8 +29,8 @@ namespace ScienceChecklist {
 				string.IsNullOrEmpty(_formattedBiome)
 					? string.Empty
 					: string.IsNullOrEmpty(_formattedSubBiome)
-						? string.Format("'s {0}", _formattedBiome)
-						: string.Format("'s {0} ({1})", _formattedSubBiome, _formattedBiome));
+						? string.Format("{0} {1}", Localizer.Format("#XScience_Planets_info"), _formattedBiome) // 's
+						: string.Format("{0} {1} ({2})", Localizer.Format("#XScience_Planets_info"), _formattedSubBiome, _formattedBiome)); // 's
 		}
 
 
@@ -76,28 +76,33 @@ namespace ScienceChecklist {
 		/// </summary>
 		public string               Description         { get { return _description; } }
 
-		
 
-		/// <summary>
-		/// Converts an ExperimentSituations to a human-readable representation.
-		/// </summary>
-		/// <param name="situation">The ExperimentSituations to be converted.</param>
-		/// <returns>The human-readable form of the ExperimentSituations.</returns>
-		private string ToString ( ExperimentSituations situation )
+		private static string flyingHigh = Localizer.Format("#XScience_Situation_FlyingHigh");
+		private static string flyingLow = Localizer.Format("#XScience_Situation_FlyingLow");
+		private static string inSpaceHigh = Localizer.Format("#XScience_Situation_InSpaceHigh");
+		private static string inSpaceLow = Localizer.Format("#XScience_Situation_InSpaceLow");
+		private static string srfLanded = Localizer.Format("#XScience_Situation_SrfLanded");
+		private static string srfSplashed = Localizer.Format("#XScience_Situation_SrfSplashed");
+        /// <summary>
+        /// Converts an ExperimentSituations to a human-readable representation.
+        /// </summary>
+        /// <param name="situation">The ExperimentSituations to be converted.</param>
+        /// <returns>The human-readable form of the ExperimentSituations.</returns>
+        private string ToString ( ExperimentSituations situation )
 		{
 			switch (situation) {
 				case ExperimentSituations.FlyingHigh:
-					return "flying high over";
+					return flyingHigh; //"flying high over"
 				case ExperimentSituations.FlyingLow:
-					return "flying low over";
+					return flyingLow; // "flying low over"
 				case ExperimentSituations.InSpaceHigh:
-					return "in space high over";
+					return inSpaceHigh; //"in space high over"
 				case ExperimentSituations.InSpaceLow:
-					return "in space near";
+					return inSpaceLow; // "in space near"
 				case ExperimentSituations.SrfLanded:
-					return "landed at";
+					return srfLanded; // "landed at"
 				case ExperimentSituations.SrfSplashed:
-					return "splashed down at";
+					return srfSplashed; // "splashed down at"
 				default:
 					return situation.ToString();
 			}
