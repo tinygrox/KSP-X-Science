@@ -442,7 +442,7 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 						{
 							for( int biome_index = 0; biome_index < bodies[ body_index ].Biomes.Count( ); biome_index++ )
 							{
-								ScienceInstance S = new ScienceInstance( experiment, new Situation( bodies[ body_index ], SituationList[ situation_index ], bodies[ body_index ].Biomes[ biome_index ] ), this );
+								ScienceInstance S = new ScienceInstance( experiment, new Situation( bodies[ body_index ], SituationList[ situation_index ], bodies[ body_index ].Biomes[ biome_index ] ), this, X.Value.rerunnable );
 								if( BodyFilter.TextFilter( S ) )
 									if( !ScienceChecklistAddon.Config.FilterDifficultScience || BodyFilter.DifficultScienceFilter( S ) )
 										_allScienceInstances.Add( S );
@@ -450,7 +450,7 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 						}
 						else
 						{
-							ScienceInstance S = new ScienceInstance( experiment, new Situation( bodies[ body_index ], SituationList[ situation_index ] ), this );
+							ScienceInstance S = new ScienceInstance( experiment, new Situation( bodies[ body_index ], SituationList[ situation_index ] ), this, X.Value.rerunnable);
 							if( BodyFilter.TextFilter( S ) )
 								if( !ScienceChecklistAddon.Config.FilterDifficultScience || BodyFilter.DifficultScienceFilter( S ) )
 									_allScienceInstances.Add( S );
@@ -472,7 +472,7 @@ _logger.Trace( "UpdateKscBiomes Done - " + Elapsed.ToString( ) + "ms" );*/
 //_logger.Trace( "BabyBiomes " + experiment.experimentTitle + ": " + sitMask );
 								for( int x = 0; x < _kscBiomes.Count; x++ )
 								{
-									ScienceInstance S = new ScienceInstance( experiment, new Situation( _bodyList[ _homeWorld ], ExperimentSituations.SrfLanded, _kscBiome, _kscBiomes[ x ] ), this );
+									ScienceInstance S = new ScienceInstance( experiment, new Situation( _bodyList[ _homeWorld ], ExperimentSituations.SrfLanded, _kscBiome, _kscBiomes[ x ] ), this, X.Value.rerunnable);
 									if( BodyFilter.TextFilter( S ) )
 										if( !ScienceChecklistAddon.Config.FilterDifficultScience || BodyFilter.DifficultScienceFilter( S ) )
 											_allScienceInstances.Add( S );

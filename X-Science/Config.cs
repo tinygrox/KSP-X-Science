@@ -15,6 +15,7 @@ namespace ScienceChecklist
         private string SettingsFile {  get { var s = KSPUtil.ApplicationRootPath + _file; _logger.Info("SettingsFile: " + s); return s; } }
         private Dictionary<GameScenes, Dictionary<string, WindowSettings>> _windowSettings = new Dictionary<GameScenes, Dictionary<string, WindowSettings>>();
 
+        private bool _simpleMode;
         private bool _hideCompleteExperiments;
         private bool _useBlizzysToolbar;
         private bool _completeWithoutRecovery;
@@ -36,6 +37,7 @@ namespace ScienceChecklist
 
 
         // Members
+        public bool SimpleMode { get { return _simpleMode; } set { if (_simpleMode != value) { _simpleMode = value; OnSimpleModeEventsChanged(); } } }
         public bool HideCompleteExperiments { get { return _hideCompleteExperiments; } set { if (_hideCompleteExperiments != value) { _hideCompleteExperiments = value; OnHideCompleteEventsChanged(); } } }
         public bool UseBlizzysToolbar { get { return _useBlizzysToolbar; } set { if (_useBlizzysToolbar != value) { _useBlizzysToolbar = value; OnUseBlizzysToolbarChanged(); } } }
         public bool CompleteWithoutRecovery { get { return _completeWithoutRecovery; } set { if (_completeWithoutRecovery != value) { _completeWithoutRecovery = value; OnCompleteWithoutRecoveryChanged(); } } }
@@ -76,7 +78,8 @@ namespace ScienceChecklist
 
 
         // Get notified when settings change
-        public event EventHandler UseBlizzysToolbarChanged;
+        public event EventHandler SimpleModeChanged;
+		public event EventHandler UseBlizzysToolbarChanged;
         public event EventHandler HideCompleteEventsChanged;
         public event EventHandler CompleteWithoutRecoveryChanged;
         public event EventHandler CheckDebrisChanged;
@@ -94,7 +97,16 @@ namespace ScienceChecklist
 
 
         // For triggering events
-        private void OnUseBlizzysToolbarChanged()
+
+        private void OnSimpleModeEventsChanged()
+        {
+            if(SimpleModeChanged != null)
+            {
+                SimpleModeChanged(this, EventArgs.Empty);
+            }
+		}
+
+		private void OnUseBlizzysToolbarChanged()
         {
             if (UseBlizzysToolbarChanged != null)
             {
@@ -277,7 +289,7 @@ namespace ScienceChecklist
             var windowSettings = root.AddNode("Windows");
 
 
-
+            settings.AddValue("SimpleMode", _simpleMode);
             settings.AddValue("HideCompleteExperiments", _hideCompleteExperiments);
             settings.AddValue("UseBlizzysToolbar", _useBlizzysToolbar);
             settings.AddValue("CompleteWithoutRecovery", _completeWithoutRecovery);
@@ -321,6 +333,7 @@ namespace ScienceChecklist
 
         public void Load()
         {
+            _simpleMode = false;
             _hideCompleteExperiments = false;
             _useBlizzysToolbar = false;
             _completeWithoutRecovery = false;
@@ -355,7 +368,11 @@ namespace ScienceChecklist
 
 
 
-                    var V = settings.GetValue("HideCompleteExperiments");
+					var V = settings.GetValue("SimpleMode");
+					if (V != null)
+						_simpleMode = bool.Parse(V);
+
+					V = settings.GetValue("HideCompleteExperiments");
                     if (V != null)
                         _hideCompleteExperiments = bool.Parse(V);
 
