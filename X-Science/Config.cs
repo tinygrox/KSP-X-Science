@@ -16,7 +16,9 @@ namespace ScienceChecklist
         private Dictionary<GameScenes, Dictionary<string, WindowSettings>> _windowSettings = new Dictionary<GameScenes, Dictionary<string, WindowSettings>>();
 
         private bool _hideCompleteExperiments;
+#if false
         private bool _useBlizzysToolbar;
+#endif
         private bool _completeWithoutRecovery;
         private bool _checkDebris;
         private bool _hideMinSciSlider;
@@ -37,7 +39,9 @@ namespace ScienceChecklist
 
         // Members
         public bool HideCompleteExperiments { get { return _hideCompleteExperiments; } set { if (_hideCompleteExperiments != value) { _hideCompleteExperiments = value; OnHideCompleteEventsChanged(); } } }
+#if false
         public bool UseBlizzysToolbar { get { return _useBlizzysToolbar; } set { if (_useBlizzysToolbar != value) { _useBlizzysToolbar = value; OnUseBlizzysToolbarChanged(); } } }
+#endif
         public bool CompleteWithoutRecovery { get { return _completeWithoutRecovery; } set { if (_completeWithoutRecovery != value) { _completeWithoutRecovery = value; OnCompleteWithoutRecoveryChanged(); } } }
         public bool CheckDebris { get { return _checkDebris; } set { if (_checkDebris != value) { _checkDebris = value; OnCheckDebrisChanged(); } } }
         public bool HideMinScienceSlider{ get { return _hideMinSciSlider; } set { if (_hideMinSciSlider != value) { _hideMinSciSlider = value; } } }
@@ -279,7 +283,9 @@ namespace ScienceChecklist
 
 
             settings.AddValue("HideCompleteExperiments", _hideCompleteExperiments);
+#if false
             settings.AddValue("UseBlizzysToolbar", _useBlizzysToolbar);
+#endif
             settings.AddValue("CompleteWithoutRecovery", _completeWithoutRecovery);
             settings.AddValue("CheckDebris", _checkDebris);
             settings.AddValue("HideMinScienceSlider", _hideMinSciSlider);
@@ -322,7 +328,9 @@ namespace ScienceChecklist
         public void Load()
         {
             _hideCompleteExperiments = false;
+#if false
             _useBlizzysToolbar = false;
+#endif
             _completeWithoutRecovery = false;
             _checkDebris = false;
             _hideMinSciSlider = false;
@@ -359,10 +367,11 @@ namespace ScienceChecklist
                     if (V != null)
                         _hideCompleteExperiments = bool.Parse(V);
 
+#if false
                     V = settings.GetValue("UseBlizzysToolbar");
                     if (V != null)
                         _useBlizzysToolbar = bool.Parse(V);
-
+#endif
                     V = settings.GetValue("CompleteWithoutRecovery");
                     if (V != null)
                         _completeWithoutRecovery = bool.Parse(V);

@@ -82,3 +82,6 @@ ChangeLog
 
 6.0.1.4
 	Changed logging level for non-debug builds to only report errors
+
+6.0.1.5 (unreleased)
+	Disabled all remaining reverences to the Blizzy toolbar in the config
