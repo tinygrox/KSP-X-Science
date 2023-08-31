@@ -83,5 +83,8 @@ ChangeLog
 6.0.1.4
 	Changed logging level for non-debug builds to only report errors
 
-6.0.1.5 (unreleased)
+6.0.2
 	Disabled all remaining reverences to the Blizzy toolbar in the config
+	Thanks to github user @UltraJohn for these:
+		When an experiment is not rerunnable, such as if it requires an engineer to reset, the experiment button in the "Here and Now" window will be color coded orange to indicate this.
+		A new setting: "Simple Mode" that simply hides the bottom number on the experiment buttons and slightly increases the font size, for a cleaner look.

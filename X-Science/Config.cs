@@ -83,7 +83,9 @@ namespace ScienceChecklist
 
         // Get notified when settings change
         public event EventHandler SimpleModeChanged;
-		public event EventHandler UseBlizzysToolbarChanged;
+#if false
+        public event EventHandler UseBlizzysToolbarChanged;
+#endif
         public event EventHandler HideCompleteEventsChanged;
         public event EventHandler CompleteWithoutRecoveryChanged;
         public event EventHandler CheckDebrisChanged;
@@ -110,13 +112,16 @@ namespace ScienceChecklist
             }
 		}
 
-		private void OnUseBlizzysToolbarChanged()
+#if false
+        private void OnUseBlizzysToolbarChanged()
         {
             if (UseBlizzysToolbarChanged != null)
             {
                 UseBlizzysToolbarChanged(this, EventArgs.Empty);
             }
         }
+#endif
+
 
         private void OnHideCompleteEventsChanged()
         {
