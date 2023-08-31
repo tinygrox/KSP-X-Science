@@ -119,11 +119,11 @@ namespace ScienceChecklist
             };
             _experimentButtonStyle = new GUIStyle(_skin.button)
             {
-                fontSize = wScale(12)
+                fontSize = wScale(12 + (ScienceChecklistAddon.Config.SimpleMode ? 1 : 0))
             };
             _experimentLabelStyle = new GUIStyle(_experimentButtonStyle)
             {
-                fontSize = wScale(12),
+                fontSize = wScale(12 + (ScienceChecklistAddon.Config.SimpleMode ? 1 : 0)),
                 normal = { textColor = Color.black }
             };
         }
@@ -391,13 +391,14 @@ namespace ScienceChecklist
             Rect buttonRect = new Rect(rect) { xMax = wScale(200) };
             string scienceValueString = " (" + exp.NextScienceIncome.ToString(
                 ScienceChecklistAddon.Config.VeryLowMinScience && exp.NextScienceIncome < 1 ? "F3" : "F1"
-                ) + ")\n" + (exp.CompletedScience + exp.OnboardScience).ToString("F2");
+                ) + ")";
+            if(!ScienceChecklistAddon.Config.SimpleMode) scienceValueString += "\n" + (exp.CompletedScience + exp.OnboardScience).ToString("F2");
             GUIContent expContent = new GUIContent(exp.ShortDescription + scienceValueString,
-                "Experiment description (next run value)\n\nRecovered+OnBoard value");
+                "Experiment description (next run value)" + (!ScienceChecklistAddon.Config.SimpleMode ? "\n\nRecovered+OnBoard value" : ""));
 
             if (ExperimentRunnable)
             {
-                _experimentButtonStyle.normal.textColor = exp.IsComplete ? Color.green : Color.yellow;
+                _experimentButtonStyle.normal.textColor = exp.IsComplete ? Color.green : exp.Rerunnable ? Color.yellow : XKCDColors.YellowishOrange;
                 if (GUI.Button(buttonRect, expContent, _experimentButtonStyle))
                 {
                     RunExperiment(exp);

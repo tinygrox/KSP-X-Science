@@ -60,7 +60,15 @@ namespace ScienceChecklist
 			GUILayout.BeginVertical( );
 
 			bool save = false;
-			var toggle = GUILayout.Toggle( ScienceChecklistAddon.Config.HideCompleteExperiments, new GUIContent( "Hide complete experiments", "Experiments considered complete will not be shown." ), toggleStyle );
+
+			var toggle = GUILayout.Toggle(ScienceChecklistAddon.Config.SimpleMode, new GUIContent("Simple mode", "Hides the bottom number on the experiment buttons for a cleaner look."), toggleStyle);
+			if (toggle != ScienceChecklistAddon.Config.SimpleMode)
+			{
+				ScienceChecklistAddon.Config.SimpleMode = toggle;
+				save = true;
+			}
+
+			toggle = GUILayout.Toggle( ScienceChecklistAddon.Config.HideCompleteExperiments, new GUIContent( "Hide complete experiments", "Experiments considered complete will not be shown." ), toggleStyle );
 			if( toggle != ScienceChecklistAddon.Config.HideCompleteExperiments )
 			{
 				ScienceChecklistAddon.Config.HideCompleteExperiments = toggle;

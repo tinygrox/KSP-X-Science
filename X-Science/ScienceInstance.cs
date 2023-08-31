@@ -7,6 +7,7 @@ namespace ScienceChecklist {
 		#region FIELDS
 		private readonly ScienceExperiment _experiment;
 		private readonly Situation _situation;
+		private readonly bool _rerunnable;
 		#endregion
 
 
@@ -16,10 +17,11 @@ namespace ScienceChecklist {
 		/// <param name="experiment">The ScienceExperiment to be used.</param>
 		/// <param name="situation">The Situation this experiment is valid in.</param>
 		/// <param name="onboardScience">A collection of all onboard ScienceData.</param>
-		public ScienceInstance( ScienceExperiment experiment, Situation situation, ScienceContext Sci )
+		public ScienceInstance( ScienceExperiment experiment, Situation situation, ScienceContext Sci, bool rerunnable )
 		{
 			_experiment = experiment;
 			_situation = situation;
+			_rerunnable = rerunnable;
 			ScienceSubject = null;
 			Update( Sci );
 		}
@@ -34,7 +36,11 @@ namespace ScienceChecklist {
 		/// Gets the Situation in which this experiment is valid.
 		/// </summary>
 		public Situation            Situation         { get { return _situation; } }
-		
+		/// <summary>
+		/// Is this experiment rerunnable?
+		/// </summary>
+		public bool Rerunnable{ get { return _rerunnable; } }
+
 		/// <summary>
 		/// Gets the ResearchAndDevelopment ID for this experiment.
 		/// </summary>
